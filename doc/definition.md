@@ -6,17 +6,18 @@ Este documento documento presenta la especificación de funcionalidades, y un pr
 
 Requerimientos:
 
-- ¿Qué debería devolver el API? _ver Geocodificación_
+- ¿Qué tipos de objetos debería devolver el API? _ver Geocodificación_
 - ¿Hay Nomenclatura Predial Rural? ¿Es de interés para este proyecto?
 - ¿Dónde se obtienen los nombres comunes `commonName` de las vías si es que lo tienen?
-- ¿Estamos interesados en llegar algún día hasta la subdivisión del lote: complemento?
-- ¿El API es de solo consulta o también se debería tener en cuenta escritura?
-- ¿Se planea sanear o consolidad los datos? Alguna consolidadción será necesaria para este proyecto por medio de `materialized views`
+- ¿Estamos interesados en llegar algún día hasta la subdivisión del lote: `complemento`?
+- ¿El API es de solo lectura o también se debería tener en cuenta la escritura?
+- ¿Se planea sanear o consolidar los datos? Alguna consolidadción será necesaria para este proyecto por medio de `materialized views`
 - ¿Tenemos a mano algunos casos de uso?
 - ¿Hay algún criterio de dimensión del punto `lon` `lat` `offset`? _Vi algo por ahí sobre la distancia entre direciones que es diferente en caso de ser rural o urbana_
 - ¿Estamos genrando `IDs` globales para los objetos? _Puede ser que esta sea una pregunta para Cleiton_
-- ¿Vamos a referenciar objeto de OSM en caso de que existan? _Por ejemplo si alguien busca CAPITOLIO NACIONAL_
+- ¿Vamos a referenciar objetos de OSM en caso de que existan? _Por ejemplo si alguien busca CAPITOLIO NACIONAL_
 - ¿Qué datos `properties` debe incluir la `response`? Especificar para cada caso _Ver apartado Response_
+- ¿El API devolvería solo objetos geográficos `features` o también se ha considerado que devuelva etiquetas como nombres o ids `strings`?
 
 ## Endpoints
 
@@ -86,7 +87,7 @@ AV 6 BIS # 28 NORTE - 09 APT 201
 
 :fire: Tomado de Lupap Developers. Debe ser adaptado a A4A
 
-```javascript
+```json
 {
    "response" : {
       "type" : "FeatureCollection",

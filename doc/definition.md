@@ -27,21 +27,17 @@ Una propuesta para facilitar el uso por parte de los desarrolladores es si se in
 La consulta puede especificarse con los siguientes parámetros:
 
 - `q=<query>` Cadena de texto libre para buscar
-- `a=<address>` Dirección codificada según la Nomenclatura Predial Urbana
+- `a=<address>` Dirección estandarizada según la Nomenclatura Predial Urbana
 
-Nomenclatura Predial Urbana
+Búsqueda estructurada: Aãdir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
 
-```text
-   vía      placa    complemento
-├───────┼─┼────────┼─┼──────────┤
-AV 6 BIS # 28 NORTE - 09 APT 201
-          ├────────┼─┼──┤
-             cruce    d
-```
+- city=<city>
+- county=<county>
+- state=<state>
+- country=<country>
+- postalcode=<postalcode>
 
-Parámetros adicionales:
-
-Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
+Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
 
 - `limit=<integer>` Cantidad de resultados retornados.
 - `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
@@ -121,6 +117,50 @@ Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se
    }
 }
 ```
+
+## Notas
+
+### Nomenclatura Predial Urbana
+
+```text
+   vía          placa  complemento
+├───────┼─┼─────────────┼───────┤
+AV 6 BIS # 28 NORTE - 09 APT 201
+          ├────────┼─┼──┤
+             cruce    distancia aproximada en metros
+```
+
+- `vía` se correposnde con la vía principal.
+- `cruce` también aparece como vía generadora.
+
+### Estandarización de Direcciones
+
+Direcciones urbanas asignadas según la malla vial.
+
+| Dirección                      | Dirección estandarizada |
+| ------------------------------ | ----------------------- |
+| Carrera 20 #13 a 45            | KR 20 13 A 45           |
+| Calle 9 No 34 – 30 Las Acacias | CL 9 34 30 LAS ACACIAS  |
+| Cll 18 26 - 54 Centro          | CL 18 26 54 CENTRO      |
+| Calle 3 15 62 Caicedo Alto     | CL 3 15 62 CAICEDO ALTO |
+
+Direcciones urbanas asignadas según la nomenclatura `barrio - manzana -predio`.
+
+| Dirección                        | Dirección estandarizada   |
+| -------------------------------- | ------------------------- |
+| Manzana 10 Casa 9 Mzna 2 Casa 1A | MZ 10 CS 9 MZ 2 CS 1A     |
+| Mzna 10 F Csa 2 B/ Nueva Aranda  | MZ 10 CS 2 B NUEVA ARANDA |
+| Barrio La Paz Mz K Cs 9          | BARRIO LA PAZ MZ K CS 9   |
+
+### Direcciones Atípicas
+
+Existen las direcciones atípicas, que no tienen la estructura descrita anteriormente. Los siguientes son ejemplos de direcciones atípicas:
+
+- Barrio Progresar 1 Manzana 4 Casa 18
+- Vereda Guayabal Lote 6 Casa 2
+- Km 5 Via La Calera Lote 101
+- Urbanización Villa Irina Manzana F Lote 9
+- Urbanización Villa de la Victoria Casa 12
 
 ## Referencias
 

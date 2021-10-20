@@ -144,7 +144,7 @@ Direcciones urbanas asignadas según la malla vial.
 | Cll 18 26 - 54 Centro          | CL 18 26 54 CENTRO      |
 | Calle 3 15 62 Caicedo Alto     | CL 3 15 62 CAICEDO ALTO |
 
-Direcciones urbanas asignadas según la nomenclatura `barrio - manzana -predio`.
+Direcciones urbanas asignadas según la nomenclatura `barrio - manzana - predio`.
 
 | Dirección                        | Dirección estandarizada   |
 | -------------------------------- | ------------------------- |
@@ -156,7 +156,6 @@ Direcciones urbanas asignadas según la nomenclatura `barrio - manzana -predio`.
 
 Existen las direcciones atípicas, que no tienen la estructura descrita anteriormente. Los siguientes son ejemplos de direcciones atípicas:
 
-- Barrio Progresar 1 Manzana 4 Casa 18
 - Vereda Guayabal Lote 6 Casa 2
 - Km 5 Via La Calera Lote 101
 - Urbanización Villa Irina Manzana F Lote 9

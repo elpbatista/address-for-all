@@ -1,77 +1,33 @@
 # Definición
 
-Este documento documento presenta la especificación de funcionalidades, y un primer acercamiento al diseño de intracción como resultado de la captura de requisitos...
+Este documetno es un borrador por lo que está sujeto a cambios, enmiendas, adiciones y correcciones hasta que todos quedemos conformes y se comparta la versión final a finales de esta semana, la cual vamos a usar como referencias para las posteriores etapas del proyecto.  
+Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que se retringirán al alcance del proyecto hasta donde ha sido concebido.
 
-## Ver con Freddy
+## URL
 
-Requerimientos:
+Esta URL es usada solo a los efectos de este documento. Debe ser sistituida por la dirección donde va a estar alejado el servicio.
 
-- ¿Qué tipos de objetos debería devolver el API? _ver Geocodificación_
-- ¿Hay Nomenclatura Predial Rural? ¿Es de interés para este proyecto?
-- ¿Dónde se obtienen los nombres comunes `commonName` de las vías si es que lo tienen?
-- ¿Estamos interesados en llegar algún día hasta la subdivisión del lote: `complemento`?
-- ¿El API es de solo lectura o también se debería tener en cuenta la escritura?
-- ¿Se planea sanear o consolidar los datos? Alguna consolidadción será necesaria para este proyecto por medio de `materialized views`
-- ¿Tenemos a mano algunos casos de uso?
-- ¿Hay algún criterio de dimensión del punto `lon` `lat` `offset`? _Vi algo por ahí sobre la distancia entre direciones que es diferente en caso de ser rural o urbana_
-- ¿Estamos genrando `IDs` globales para los objetos? _Puede ser que esta sea una pregunta para Cleiton_
-- ¿Vamos a referenciar objetos de OSM en caso de que existan? _Por ejemplo si alguien busca CAPITOLIO NACIONAL_
-- ¿Qué datos `properties` debe incluir la `response`? Especificar para cada caso _Ver apartado Response_
-- ¿El API devolvería solo objetos geográficos `features` o también se ha considerado que devuelva etiquetas como nombres o ids `strings`?
+`http(s)://api.address4all.org/`
 
 ## Endpoints
 
-Un `endpoint` es básicamente una palabra elegante para una URL de un servidor o servicio a través de una API.
+A continuación se definen los siguientes endpoints:
 
-Este apartado es un borrardor de especificación del formato de `requests` y `responses` para cada caso de interacción definido por el usario final (Freddy). Se ha tomado como referencia la [documentación](https://developer.lupap.com/documentation) del Geocodificador de archivos y API de geocodificación para Colombia.
+- /search ⟹ direcciones a partir de texto libre
+- /reverse ⟹ direcciones a partir de su localización
+- /lookup ⟹ direcciones a partir de su id (CID?)
+- /doc, /help ⟹ devuelve este documento
 
-### Geocodificación
+Una propuesta para facilitar el uso por parte de los desarrolladores es si se invoca `URL+endpoint` sin parámetros, o sea nada a partir de `?` devuelver una especie de capability. Una docuemto donde se especifique qué contiene cada parámetro y qué se espera obtener como respuesta.
 
-La respueta es un JSON que incluye una `FeatureCollection` si toca depende de cuán verbosa se quirea hacer.
+### Búsqueda de Direcciones o Geocodificación
 
-- `string` ⟹ `FeatureCollection`
+      https://api.address4all.org/search?<params>
 
-#### Direcciones
+La consulta puede especificarse con los siguientes parámetros:
 
-Response:
-
-- `features.length() = n`
-- `Feature.geometry.type = Point`
-
-#### Vías
-
-Response:
-
-- `features.length() = n`
-- `Feature.geometry.type = LineString || MultiLineString`
-
-#### Intersecciones
-
-Response:
-
-- `features.length() = n`
-- `Feature.geometry.type =` :question:
-
-#### Lugares
-
-Response:
-
-- `features.length() = n`
-- `Feature.geometry.type =` :question:
-
-### Geocodificación Inversa
-
-- `Point` ⟹ `FeatureCollection` donde `features.length() = 1` :question:
-- `Extent` ⟹ `FeatureCollection`
-- `FeatureCollection` ⟹ `FeatureCollection` :rocket:
-
-## Anotaciones
-
-Implementar un mecanismo de validación de entrada `input validation` para prevenier la iyección de SQL `SQL injection`. Esto seguramente será descrito detalladamente en otra parte de la especificación.
-
-:question: ¿Incluir llamadas de `service capability`?
-
-Inside this document, the term "geometry type" refers to seven case-sensitive strings: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", and "GeometryCollection".
+- `q=<query>` Cadena de texto libre para buscar
+- `a=<address>` Dirección codificada según la Nomenclatura Predial Urbana
 
 Nomenclatura Predial Urbana
 
@@ -83,9 +39,50 @@ AV 6 BIS # 28 NORTE - 09 APT 201
              cruce    d
 ```
 
+Parámetros adicionales:
+
+Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
+
+- `limit=<integer>` Cantidad de resultados retornados.
+- `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
+
+### Recuperación de direcciones
+
+La recuperación permite obetener una o varias direcciones a partir de su CID.
+
+El API de búsqueda tiene el siguiente formato:
+
+      https://api.address4all.org/lookup?cids=<value>,…,…,&<params>
+
+### Geocodificación Inversa
+
+      https://api.address4all.org/reverse?lat=<value>&lon=<value>&<params>
+
+- `offset=<radius>` Default 3 (metros)
+
+A nivel de servicio se podría resolver de la siguiente manera:
+
+```sql
+SELECT "address", ST_Distance(geom, ST_MakePoint(lon, lat)) AS distance
+FROM "addresses"
+WHERE  distance <= offset
+ORDER BY distance
+LIMIT 1;
+```
+
+Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se corresponden con la BD, esto es solo un ejemplo. También podrían probarse otros métodos en pos de encontrar el desempeño óptimo.
+
 ## Response
 
-:fire: Tomado de Lupap Developers. Debe ser adaptado a A4A
+:fire: Tomado de Lupap Developers. Debe ser adaptado a A4A en función de los datos conque se cuenta.
+
+- La API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
+  - `features.length() = 0`: la búnqueda no arrojó ningún resultado
+  - `features.length() > 0`: la búnsqueda ha sido exitosa.
+    - `features.length() = 1`: el resultado es exacto.
+    - `features.length() > 1`: se necesita desambigüación.
+- Se añadió el código **DIVIPOLA** por recomendación de Freddy por ser de uso muy frecuente entre los locales, inlcuso por encima del Código Postal.
+- Los niveles administrativos requieren una pasada de mano con mayor atención. No estoy seguro si se quiere guardar alguna compatibilidad con el resto de los sets de datos del proyecto ¿a quién lse lee puede preguntar?
 
 ```json
 {
@@ -109,6 +106,7 @@ AV 6 BIS # 28 NORTE - 09 APT 201
                  "commonName": "AVENIDA SANTA BARBARA",
                  "address": "AK 19 # 135 - 30",
                  "postcode": "110121",
+                 "divipolacode": "15001001",
                  "admin1": "Colombia",
                  "admin2": "Bogotá D.C.",
                  "admin3": "Bogotá D.C.",
@@ -128,4 +126,11 @@ AV 6 BIS # 28 NORTE - 09 APT 201
 
 1. <https://developer.lupap.com>
 2. <https://geojson.org>
-3. <https://en.wikipedia.org/wiki/Box-drawing_character>
+3. <https://nominatim.org/release-docs/develop/>
+4. <https://en.wikipedia.org/wiki/Box-drawing_character>
+5. <https://geoportal.dane.gov.co/geovisores/territorio/consulta-divipola-division-politico-administrativa-de-colombia/>
+6. <https://www.dane.gov.co/files/investigaciones/divipola/divipola2007.pdf>
+7. <https://www.datos.gov.co/widgets/gdxc-w37w>
+8. <https://muisca.dian.gov.co/WebRutMuisca/visor/formularios/f18/v4/direcciones/direcciones.jsp>
+9. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#10_admin_level_values_for_specific_countries>
+10. <https://postgis.net/docs/ST_Distance.html>

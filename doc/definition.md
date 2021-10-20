@@ -31,11 +31,11 @@ La consulta puede especificarse con los siguientes parámetros:
 
 Búsqueda estructurada: Aãdir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
 
-- city=<city>
-- county=<county>
-- state=<state>
-- country=<country>
-- postalcode=<postalcode>
+- `city=<city>`
+- `county=<county>`
+- `state=<state>`
+- `country=<country>`
+- `postalcode=<postalcode>`
 
 Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
 

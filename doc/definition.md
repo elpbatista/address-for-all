@@ -81,47 +81,45 @@ Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se
 
 ```json
 {
-  "response": {
-    "type": "FeatureCollection",
-    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
-    "features": [
-      {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [-74.04659813699993, 4.720145423000076]
-        },
-        "properties": {
-          "CID": "",
-          "attribution": "geoapps",
-          "common_name": "AVENIDA SANTA BARBARA",
-          "official_name": "",
-          "alt_name": "",
-          "old_name": "",
-          "address": "AK 19 # 135 - 30",
-          "housename": "Edificio de las Naciones",
-          "display_name": "Avenida Carrera Santa Bárbara # 135 - 30",
-          "city": "",
-          "state": "",
-          "postcode": "110121",
-          "country": "Colombia",
-          "country_code": "co",
-          "divipolacode": "15001001",
-          "admin1": "N/A",
-          "admin2": "Colombia",
-          "admin3": "",
-          "admin4": "",
-          "admin4": "",
-          "admin5": "",
-          "admin6": "",
-          "admin7": "",
-          "admin8": "",
-          "admin9": "",
-          "admin10": ""
-        }
+  "type": "FeatureCollection",
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.04659813699993, 4.720145423000076]
+      },
+      "properties": {
+        "CID": "",
+        "attribution": "geoapps",
+        "common_name": "AVENIDA SANTA BARBARA",
+        "official_name": "",
+        "alt_name": "",
+        "old_name": "",
+        "address": "AK 19 # 135 - 30",
+        "housename": "Edificio de las Naciones",
+        "display_name": "Avenida Carrera Santa Bárbara # 135 - 30",
+        "city": "",
+        "state": "",
+        "postcode": "110121",
+        "country": "Colombia",
+        "country_code": "co",
+        "divipolacode": "15001001",
+        "admin1": "N/A",
+        "admin2": "Colombia",
+        "admin3": "",
+        "admin4": "",
+        "admin4": "",
+        "admin5": "",
+        "admin6": "",
+        "admin7": "",
+        "admin8": "",
+        "admin9": "",
+        "admin10": ""
       }
-    ]
-  }
+    }
+  ]
 }
 ```
 

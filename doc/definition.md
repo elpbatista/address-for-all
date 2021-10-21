@@ -128,7 +128,7 @@ Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se
 ## Notas
 
 1. Es imperativo definir una convención para las etiquetas, los nombres de las propiedades, funciones, variables, incluso para los contenidos. Por favor agregar la referencia si es que ya existe.
-2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar unayor precisión para representarlas es totalmente innecesario. Esto rediciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa en la eficiencia sobre todo en el cálculo de operaciones espaciales.
+2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar una mayor precisión para representarlas es totalmente innecesario. Esto reduciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa el cálculo de operaciones espaciales, haciéndolo mucho más ágil/eficiente.
 
 ### Nomenclatura Predial Urbana
 

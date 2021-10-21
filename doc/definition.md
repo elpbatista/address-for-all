@@ -29,12 +29,11 @@ La consulta puede especificarse con los siguientes parámetros:
 - `q=<query>` Cadena de texto libre para buscar
 - `a=<address>` Dirección estandarizada según la Nomenclatura Predial Urbana
 
-Búsqueda estructurada: Aãdir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
+Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
 
-- `city=<city>`
+- `city=<city>` ⟹ `admin_level=7`
 - `county=<county>`
-- `state=<state>`
-- `country=<country>`
+- `state=<state>` ⟹ En Colombia Departamento `admin_level=4`
 - `postalcode=<postalcode>`
 
 Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
@@ -70,8 +69,6 @@ Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se
 
 ## Response
 
-:fire: Tomado de Lupap Developers. Debe ser adaptado a A4A en función de los datos conque se cuenta.
-
 - La API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
   - `features.length() = 0`: la búnqueda no arrojó ningún resultado
   - `features.length() > 0`: la búnsqueda ha sido exitosa.
@@ -79,46 +76,59 @@ Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se
     - `features.length() > 1`: se necesita desambigüación.
 - Se añadió el código **DIVIPOLA** por recomendación de Freddy por ser de uso muy frecuente entre los locales, inlcuso por encima del Código Postal.
 - Los niveles administrativos requieren una pasada de mano con mayor atención. No estoy seguro si se quiere guardar alguna compatibilidad con el resto de los sets de datos del proyecto ¿a quién lse lee puede preguntar?
+- Teniendo en cuenta que las vías pueden ser conocidad o nombradad de varias formas recogidas en el apartado [Nombres de Calles](https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear#Nombres_de_calles) de la Guía para Mapear de OSM-Colombia, se propone incluir las propiedades `oficial_name`, `alt_name` y `old_name`.
+- En el documento antes mencionado se propone el uso de `housename` para identificar edificaciones, granjas, colegios que tienen un nombre oficial o ampliamente utilizado.
 
 ```json
 {
-   "response" : {
-      "type" : "FeatureCollection",
-      "features" : [ // arreglo de objetos de tipo Feature
-          {
-              "type" : "Feature",
-              "geometry" : {
-                  "type" : "Point",
-                  "coordinates": [
-                      -74.04659813699993,
-                      4.720145423000076
-                  ]
-              },
-              "properties" : {
-                 "accuracy": "rooftop",
-                 "country": "co",
-                 "city": "bogota",
-                 "attribution": "geoapps",
-                 "commonName": "AVENIDA SANTA BARBARA",
-                 "address": "AK 19 # 135 - 30",
-                 "postcode": "110121",
-                 "divipolacode": "15001001",
-                 "admin1": "Colombia",
-                 "admin2": "Bogotá D.C.",
-                 "admin3": "Bogotá D.C.",
-                 "admin4": "Usaquen",
-                 "admin5": "El Contador"
-             }
-          }
-
-      ... // mas objetos de tipo Feature
-
-      ]
-   }
+  "response": {
+    "type": "FeatureCollection",
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [-74.04659813699993, 4.720145423000076]
+        },
+        "properties": {
+          "CID": "",
+          "attribution": "geoapps",
+          "common_name": "AVENIDA SANTA BARBARA",
+          "official_name": "",
+          "alt_name": "",
+          "old_name": "",
+          "address": "AK 19 # 135 - 30",
+          "housename": "Edificio de las Naciones",
+          "display_name": "Avenida Carrera Santa Bárbara # 135 - 30",
+          "city": "",
+          "state": "",
+          "postcode": "110121",
+          "country": "Colombia",
+          "country_code": "co",
+          "divipolacode": "15001001",
+          "admin1": "N/A",
+          "admin2": "Colombia",
+          "admin3": "",
+          "admin4": "",
+          "admin4": "",
+          "admin5": "",
+          "admin6": "",
+          "admin7": "",
+          "admin8": "",
+          "admin9": "",
+          "admin10": ""
+        }
+      }
+    ]
+  }
 }
 ```
 
 ## Notas
+
+1. Es imperativo definir una convención para las etiquetas, los nombres de las propiedades, funciones, variables, incluso para los contenidos. Por favor agregar la referencia si es que ya existe.
+2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar unayor precisión para representarlas es totalmente innecesario. Esto rediciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa en la eficiencia sobre todo en el cálculo de operaciones espaciales.
 
 ### Nomenclatura Predial Urbana
 
@@ -161,6 +171,23 @@ Existen las direcciones atípicas, que no tienen la estructura descrita anterior
 - Urbanización Villa Irina Manzana F Lote 9
 - Urbanización Villa de la Victoria Casa 12
 
+### Niveles administrativos
+
+Tomado de la especificación de uso de los Niveles Administrativos de OpenStreetMap. Se puede consultar [aquí](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values) `Ctrl+F Colombia`
+
+| `admin_level`    | Divisiones Adminstrativas de Colombia     |
+| ---------------- | ----------------------------------------- |
+| `admin_level=1`  | N/A                                       |
+| `admin_level=2`  | País                                      |
+| `admin_level=3`  | Región de planeación administrativa       |
+| `admin_level=4`  | Departamento                              |
+| `admin_level=5`  | Provincia                                 |
+| `admin_level=6`  | Municipio                                 |
+| `admin_level=7`  | Urbano: Ciudad, Rural: Corregimiento      |
+| `admin_level=8`  | Urbano: Localidad o Comuna, Rural: Vereda |
+| `admin_level=9`  | Urbano: Barrio, Rural: N/A                |
+| `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |
+
 ## Referencias
 
 1. <https://developer.lupap.com>
@@ -173,3 +200,6 @@ Existen las direcciones atípicas, que no tienen la estructura descrita anterior
 8. <https://muisca.dian.gov.co/WebRutMuisca/visor/formularios/f18/v4/direcciones/direcciones.jsp>
 9. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#10_admin_level_values_for_specific_countries>
 10. <https://postgis.net/docs/ST_Distance.html>
+11. <https://wiki.openstreetmap.org/wiki/Key:admin_level>
+12. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values>
+13. <https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear>

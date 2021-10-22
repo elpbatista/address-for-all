@@ -13,10 +13,10 @@ Esta URL es usada solo a los efectos de este documento. Debe ser sistituida por 
 
 A continuación se definen los siguientes endpoints:
 
-- /search ⟹ direcciones a partir de texto libre
-- /reverse ⟹ direcciones a partir de su localización
-- /lookup ⟹ direcciones a partir de su id (CID?)
-- /doc, /help ⟹ devuelve este documento
+- /search ⟹ Obtener direcciones a partir de texto libre y parametrizado (búsqueda estructurada)
+- /reverse ⟹ Obtener direcciones a partir de su localización
+- /lookup ⟹ Obtener direcciones a partir de su id (CID?)
+- /doc, /help ⟹ Consultar la documentación (devuelve este documento más o menos)
 
 Una propuesta para facilitar el uso por parte de los desarrolladores es si se invoca `URL+endpoint` sin parámetros, o sea nada a partir de `?` devuelver una especie de capability. Una docuemto donde se especifique qué contiene cada parámetro y qué se espera obtener como respuesta.
 
@@ -47,15 +47,35 @@ La recuperación permite obetener una o varias direcciones a partir de su CID.
 
 El API de búsqueda tiene el siguiente formato:
 
-      https://api.address4all.org/lookup?cids=<value>,…,…,&<params>
+      https://api.address4all.org/lookup?cids=<value>,…,<value>&<params>
+
+- `cids=<value>,…,<value>`
 
 ### Geocodificación Inversa
 
-      https://api.address4all.org/reverse?lat=<value>&lon=<value>&<params>
+      https://api.address4all.org/reverse?lon=<value>&lat=<value>&<params>
 
-- `offset=<radius>` Default 3 (metros)
+- `lon=<value>`
+- `lat=<value>`
+- `offset=<vlue>` Default `radius=3m`
+- `limit=<velue>` Junto con `offset` _(las N direcciones más cercanas)_
+- `geom=<geometry>` :question:
 
-A nivel de servicio se podría resolver de la siguiente manera:
+### Obeter una dirección a partir de un punto
+
+`https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014`
+
+Devuelve la dirección más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`, cuyo valor por defecto es 3.
+
+### Obtener las N direcciones más cercanas al punto
+
+Devuelve las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
+
+`https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014&offset=50&limit=10`
+
+### Consulta a nivel de servicio
+
+A continuación aparece una simulación de como podría ser la consulta a la base de datos de PostgreSQL+QGIS donde está soportado el servicio. Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se corresponden con la BD, esto es solo un ejemplo. También podrían probarse otros métodos en pos de encontrar el desempeño óptimo.
 
 ```sql
 SELECT "address", ST_Distance(geom, ST_MakePoint(lon, lat)) AS distance
@@ -65,11 +85,22 @@ ORDER BY distance
 LIMIT 1;
 ```
 
-Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se corresponden con la BD, esto es solo un ejemplo. También podrían probarse otros métodos en pos de encontrar el desempeño óptimo.
+## Consultas al API
 
-## Response
+- **GET** `/search`
+- **GET|POST** `/search?{q=<string>}&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+- **GET|POST** `/search?{a=<string>}&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+- **GET** `/lookup`
+- **GET|POST** `/lookup?{cids=<string>,…,<string>}`
+- **GET** `/reverse`
+- **GET|POST** `/reverse?{lon=<integer>&lat=<integer>}&[offset=<integer>]&[limit=<integer>]`
+- **POST** `/reverse?{geom=<object>}&[limit=<integer>]` :question:
+- **GET** `/doc`
+- **GET** `/help`
 
-- La API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
+## Respuesta
+
+- El API devuelve **en todos los casos** una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
   - `features.length() = 0`: la búnqueda no arrojó ningún resultado
   - `features.length() > 0`: la búnsqueda ha sido exitosa.
     - `features.length() = 1`: el resultado es exacto.

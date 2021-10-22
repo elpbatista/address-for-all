@@ -88,13 +88,14 @@ LIMIT 1;
 ## Consultas al API
 
 - **GET** `/search`
-- **GET|POST** `/search?{q=<string>}&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
-- **GET|POST** `/search?{a=<string>}&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+- **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+- **GET|POST** `/search?a=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
 - **GET** `/lookup`
-- **GET|POST** `/lookup?{cids=<string>,…,<string>}`
+- **GET|POST** `/lookup?cids=<string>[,…,<string>]`
 - **GET** `/reverse`
-- **GET|POST** `/reverse?{lon=<integer>&lat=<integer>}&[offset=<integer>]&[limit=<integer>]`
-- **POST** `/reverse?{geom=<object>}&[limit=<integer>]` :question:
+- - **GET|POST** `/reverse?lon=<integer>&lat=<integer>&{offset=3}&{limit=1}`
+- **GET|POST** `/reverse?lon=<integer>&lat=<integer>&[offset=<integer>]&[limit=<integer>]`
+- **POST** `/reverse?geom=<object>&[limit=<integer>]` :question:
 - **GET** `/doc`
 - **GET** `/help`
 
@@ -216,6 +217,13 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 | `admin_level=8`  | Urbano: Localidad o Comuna, Rural: Vereda |             |
 | `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
 | `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
+
+### Convenciones de notaciones
+
+- corchetes `[opcional]`
+- corchetes angulares `<requerido>`
+- llaves `{valores por defecto}`
+- paréntesis `(información diversa)`
 
 ## Referencias
 

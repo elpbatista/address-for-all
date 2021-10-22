@@ -1,15 +1,43 @@
-# Definición
+# Definición  <!-- omit in toc -->
 
 Este documetno es un borrador por lo que está sujeto a cambios, enmiendas, adiciones y correcciones hasta que todos quedemos conformes y se comparta la versión final a finales de esta semana, la cual vamos a usar como referencias para las posteriores etapas del proyecto.  
 Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que se retringirán al alcance del proyecto hasta donde ha sido concebido.
 
-## URL
+- [1. URL](#1-url)
+- [2. Endpoints](#2-endpoints)
+  - [2.1. Búsqueda de Direcciones](#21-búsqueda-de-direcciones)
+    - [Especificación de formato](#especificación-de-formato)
+    - [Búsqueda estructurada](#búsqueda-estructurada)
+    - [Parámetros adicionales](#parámetros-adicionales)
+  - [2.2. Geocodificación](#22-geocodificación)
+  - [2.3. Geocodificación Inversa](#23-geocodificación-inversa)
+  - [2.4. Obeter una dirección a partir de un punto](#24-obeter-una-dirección-a-partir-de-un-punto)
+  - [2.5. Obtener las N direcciones más cercanas al punto](#25-obtener-las-n-direcciones-más-cercanas-al-punto)
+  - [2.6. Consulta espacial a nivel de servicio](#26-consulta-espacial-a-nivel-de-servicio)
+- [3. Consultas al API](#3-consultas-al-api)
+- [4. Respuesta](#4-respuesta)
+  - [4.1. Nombres y direcciones estandarizados](#41-nombres-y-direcciones-estandarizados)
+  - [4.2. Direcciones georeferenciadas y sus metadatos](#42-direcciones-georeferenciadas-y-sus-metadatos)
+- [5. Micro Servicios](#5-micro-servicios)
+  - [5.1. Búsqueda Espacial](#51-búsqueda-espacial)
+  - [5.2. Nombre - Forma Canónica](#52-nombre---forma-canónica)
+  - [5.3. Dirección - Metadato](#53-dirección---metadato)
+- [6. Notas](#6-notas)
+  - [6.1. Nomenclatura Predial Urbana](#61-nomenclatura-predial-urbana)
+  - [6.2. Estandarización de Direcciones](#62-estandarización-de-direcciones)
+  - [6.3. Direcciones Atípicas](#63-direcciones-atípicas)
+  - [6.4. Niveles administrativos](#64-niveles-administrativos)
+  - [6.5. Convenciones](#65-convenciones)
+    - [6.5.1. Notaciones](#651-notaciones)
+- [7. Referencias](#7-referencias)
+
+## 1. URL
 
 Esta URL es usada solo a los efectos de este documento. Debe ser sistituida por la dirección donde va a estar alejado el servicio.
 
 `http(s)://api.address4all.org/`
 
-## Endpoints
+## 2. Endpoints
 
 A continuación se definen los siguientes endpoints:
 
@@ -20,23 +48,28 @@ A continuación se definen los siguientes endpoints:
 
 Una propuesta para facilitar el uso por parte de los desarrolladores es si se invoca `URL+endpoint` sin parámetros, o sea nada a partir de `?` devuelver una especie de capability. Una docuemto donde se especifique qué contiene cada parámetro y qué se espera obtener como respuesta.
 
-### Búsqueda de Direcciones
+### 2.1. Búsqueda de Direcciones
 
       https://api.address4all.org/search?<params>
 
-La consulta puede especificarse con los siguientes parámetros:
-
 - `q=<query>` Cadena de texto libre para buscar
+
+#### Especificación de formato
+
 - `format=<value>` Formato de salida. Defautl `json`, si `geojson` incluye geocodificación
 
-Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
+#### Búsqueda estructurada
+
+Lista de parámetros separados por coma `,`.
 
 - `city=<city>` ⟹ `admin_level=7`
 - `county=<county>`
 - `state=<state>` ⟹ En Colombia Departamento `admin_level=4`
 - `postalcode=<postalcode>`
 
-Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
+#### Parámetros adicionales
+
+Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
 
 - `limit=<integer>` Cantidad de resultados retornados.
 - `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
@@ -46,7 +79,7 @@ Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así co
 - `in=<geometry>` :question:
 - `out=<geometry>` :question:
 
-### Geocodificación
+### 2.2. Geocodificación
 
 Devuelve una o varias direcciones a partir de su CID.
 
@@ -60,7 +93,7 @@ Devuelve una o varias direcciones a partir de la forma canónica o estandraizada
 
 - `cads=<value>,…,<value>`
 
-### Geocodificación Inversa
+### 2.3. Geocodificación Inversa
 
       https://api.address4all.org/reverse?lon=<value>&lat=<value>&<params>
 
@@ -70,19 +103,19 @@ Devuelve una o varias direcciones a partir de la forma canónica o estandraizada
 - `limit=<value>` Junto con `offset` _(las N direcciones más cercanas)_
 - `geom=<geometry>` :question:
 
-### Obeter una dirección a partir de un punto
+### 2.4. Obeter una dirección a partir de un punto
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014`
 
 Devuelve la dirección más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`, cuyo valor por defecto es 3.
 
-### Obtener las N direcciones más cercanas al punto
+### 2.5. Obtener las N direcciones más cercanas al punto
 
 Devuelve las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014&offset=50&limit=10`
 
-### Consulta a nivel de servicio
+### 2.6. Consulta espacial a nivel de servicio
 
 A continuación aparece una simulación de como podría ser la consulta a la base de datos de PostgreSQL+QGIS donde está soportado el servicio. Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se corresponden con la BD, esto es solo un ejemplo. También podrían probarse otros métodos en pos de encontrar el desempeño óptimo.
 
@@ -94,7 +127,7 @@ ORDER BY distance
 LIMIT 1;
 ```
 
-## Consultas al API
+## 3. Consultas al API
 
 - **GET** `/search`
 - **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
@@ -109,7 +142,11 @@ LIMIT 1;
 - **GET** `/doc`
 - **GET** `/help`
 
-## Respuesta
+## 4. Respuesta
+
+### 4.1. Nombres y direcciones estandarizados
+
+Cuando `format=json`, valor por defecto en la búsqueda de direcciones, se devuelve una arreglo de objetos con las propiedades `address` y `display_name` de las direcciones que satisfacen los criterios de la búsqueda.
 
 ```json
 [
@@ -120,7 +157,9 @@ LIMIT 1;
 ]
 ```
 
-- El API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
+### 4.2. Direcciones georeferenciadas y sus metadatos
+
+- Cuando `format=geojson` el API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
   - `features.length() = 0`: la búnqueda no arrojó ningún resultado
   - `features.length() > 0`: la búnsqueda ha sido exitosa.
     - `features.length() = 1`: el resultado es exacto.
@@ -174,28 +213,26 @@ LIMIT 1;
 }
 ```
 
-## Micro Servicios
+## 5. Micro Servicios
 
-### Búsqueda Espacial
+### 5.1. Búsqueda Espacial
 
-Devuelve direcciones
+Devuelve direcciones a partir de una cadena de texto libre. La búsqueda puede ser acotada a través de parámetros y operacione espaciales
 
-### Nombre - Forma Canónica
+### 5.2. Nombre - Forma Canónica
 
 Devuelve formas canónicas ej: Avenida Santa Bárbara - AK 19
 
-### Dirección - Metadato
+### 5.3. Dirección - Metadato
 
 Devuelve el metadato a partir de na dirección estandarizada
 
-
-
-## Notas
+## 6. Notas
 
 1. Es imperativo definir una convención para las etiquetas, los nombres de las propiedades, funciones, variables, incluso para los contenidos. Por favor agregar la referencia si es que ya existe.
 2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar una mayor precisión para representarlas es totalmente innecesario. Esto reduciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa el cálculo de operaciones espaciales, haciéndolo mucho más ágil/eficiente.
 
-### Nomenclatura Predial Urbana
+### 6.1. Nomenclatura Predial Urbana
 
 ```text
    vía          placa  complemento
@@ -208,7 +245,7 @@ AV 6 BIS # 28 NORTE - 09 APT 201
 - `vía` se correposnde con la vía principal.
 - `cruce` también aparece como vía generadora.
 
-### Estandarización de Direcciones
+### 6.2. Estandarización de Direcciones
 
 Direcciones urbanas asignadas según la malla vial.
 
@@ -227,7 +264,7 @@ Direcciones urbanas asignadas según la nomenclatura `barrio - manzana - predio`
 | Mzna 10 F Csa 2 B/ Nueva Aranda  | MZ 10 CS 2 B NUEVA ARANDA |
 | Barrio La Paz Mz K Cs 9          | BARRIO LA PAZ MZ K CS 9   |
 
-### Direcciones Atípicas
+### 6.3. Direcciones Atípicas
 
 Existen las direcciones atípicas, que no tienen la estructura descrita anteriormente. Los siguientes son ejemplos de direcciones atípicas:
 
@@ -236,7 +273,7 @@ Existen las direcciones atípicas, que no tienen la estructura descrita anterior
 - Urbanización Villa Irina Manzana F Lote 9
 - Urbanización Villa de la Victoria Casa 12
 
-### Niveles administrativos
+### 6.4. Niveles administrativos
 
 Tomado de la especificación de uso de los Niveles Administrativos de OpenStreetMap. Se puede consultar [aquí](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values) `Ctrl+F Colombia`
 
@@ -253,16 +290,16 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 | `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
 | `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
 
-### Convenciones
+### 6.5. Convenciones
 
-#### Notaciones
+#### 6.5.1. Notaciones
 
 - corchetes `[opcional]`
 - corchetes angulares `<requerido>`
 - llaves `{valores por defecto}`
 - paréntesis `(información diversa)`
 
-## Referencias
+## 7. Referencias
 
 1. <https://developer.lupap.com>
 2. <https://geojson.org>

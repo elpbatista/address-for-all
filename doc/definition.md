@@ -15,7 +15,7 @@ A continuación se definen los siguientes endpoints:
 
 - /search ⟹ Obtener direcciones a partir de texto libre y parametrizado (búsqueda estructurada)
 - /reverse ⟹ Obtener direcciones a partir de su localización
-- /lookup ⟹ Obtener direcciones a partir de su id o du forma canónica (CID?)
+- /lookup ⟹ Obtener direcciones a partir de su id o su forma canónica (CID?)
 - /doc, /help ⟹ Consultar la documentación (devuelve este documento más o menos)
 
 Una propuesta para facilitar el uso por parte de los desarrolladores es si se invoca `URL+endpoint` sin parámetros, o sea nada a partir de `?` devuelver una especie de capability. Una docuemto donde se especifique qué contiene cada parámetro y qué se espera obtener como respuesta.
@@ -27,7 +27,7 @@ Una propuesta para facilitar el uso por parte de los desarrolladores es si se in
 La consulta puede especificarse con los siguientes parámetros:
 
 - `q=<query>` Cadena de texto libre para buscar
-- `format=<value>` Formato de salida. Defautl `json`, también puede ser `geojson` y `geocodejson` que incluyen geocodificación
+- `format=<value>` Formato de salida. Defautl `json`, si `geojson` incluye geocodificación
 
 Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
 
@@ -36,7 +36,7 @@ Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son al
 - `state=<state>` ⟹ En Colombia Departamento `admin_level=4`
 - `postalcode=<postalcode>`
 
-Parámetros adicionales: Su objetvo es acotar (paginar) el alcance de la búsqueda así como la cantidad de resultados.
+Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
 
 - `limit=<integer>` Cantidad de resultados retornados.
 - `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
@@ -48,13 +48,7 @@ Parámetros adicionales: Su objetvo es acotar (paginar) el alcance de la búsque
 
 ### Geocodificación
 
-<<<<<<< HEAD
 Devuelve una o varias direcciones a partir de su CID.
-=======
-La recuperación permite obtener una o varias direcciones a partir de su CID.
-
-El API de búsqueda tiene el siguiente formato:
->>>>>>> f211ab442602fbcfd3b81047f3f99e5f425b20f0
 
       https://api.address4all.org/lookup?cids=<value>,…,<value>&<params>
 
@@ -76,7 +70,7 @@ Devuelve una o varias direcciones a partir de la forma canónica o estandraizada
 - `limit=<value>` Junto con `offset` _(las N direcciones más cercanas)_
 - `geom=<geometry>` :question:
 
-### Obtener una dirección a partir de un punto
+### Obeter una dirección a partir de un punto
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014`
 
@@ -84,7 +78,7 @@ Devuelve la dirección más cercana al punto `(lon,lat)` que recibe como paráme
 
 ### Obtener las N direcciones más cercanas al punto
 
-Devuelve como un arreglo las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
+Devuelve las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014&offset=50&limit=10`
 
@@ -179,6 +173,22 @@ LIMIT 1;
   ]
 }
 ```
+
+## Micro Servicios
+
+### Búsqueda Espacial
+
+Devuelve direcciones
+
+### Nombre - Forma Canónica
+
+Devuelve formas canónicas ej: Avenida Santa Bárbara - AK 19
+
+### Dirección - Metadato
+
+Devuelve el metadato a partir de na dirección estandarizada
+
+
 
 ## Notas
 

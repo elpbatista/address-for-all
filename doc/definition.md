@@ -218,7 +218,9 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 | `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
 | `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
 
-### Convenciones de notaciones
+### Convenciones
+
+#### Notaciones
 
 - corchetes `[opcional]`
 - corchetes angulares `<requerido>`

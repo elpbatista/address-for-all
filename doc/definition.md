@@ -131,7 +131,6 @@ LIMIT 1;
 
 - **GET** `/search`
 - **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
-<!-- - **GET|POST** `/search?a=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]` -->
 - **GET** `/lookup`
 - **GET|POST** `/lookup?cids=<string>[,…,<string>]`
 - **GET|POST** `/lookup?cads=<string>[,…,<string>]`

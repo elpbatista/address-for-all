@@ -36,14 +36,14 @@ Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son al
 - `state=<state>` ⟹ En Colombia Departamento `admin_level=4`
 - `postalcode=<postalcode>`
 
-Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
+Parámetros adicionales: Su objetvo es acotar (paginar) el alcance de la búsqueda así como la cantidad de resultados.
 
 - `limit=<integer>` Cantidad de resultados retornados.
 - `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
 
 ### Recuperación de direcciones
 
-La recuperación permite obetener una o varias direcciones a partir de su CID.
+La recuperación permite obtener una o varias direcciones a partir de su CID.
 
 El API de búsqueda tiene el siguiente formato:
 
@@ -61,7 +61,7 @@ El API de búsqueda tiene el siguiente formato:
 - `limit=<velue>` Junto con `offset` _(las N direcciones más cercanas)_
 - `geom=<geometry>` :question:
 
-### Obeter una dirección a partir de un punto
+### Obtener una dirección a partir de un punto
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014`
 
@@ -69,7 +69,7 @@ Devuelve la dirección más cercana al punto `(lon,lat)` que recibe como paráme
 
 ### Obtener las N direcciones más cercanas al punto
 
-Devuelve las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
+Devuelve como un arreglo las cantidad de direcciones especificadas en `limit` más cercana al punto `(lon,lat)` que recibe como parámetro. La operación está restringida al radio en metros que se especifica como `offset`. Los parámetros `offset` y `limit` podrían tener restricciones de valor máximo `max_value=<integer>`
 
 `https://api.address4all.org/reverse?lon=-74.04659&lat=4.72014&offset=50&limit=10`
 

@@ -15,19 +15,19 @@ A continuación se definen los siguientes endpoints:
 
 - /search ⟹ Obtener direcciones a partir de texto libre y parametrizado (búsqueda estructurada)
 - /reverse ⟹ Obtener direcciones a partir de su localización
-- /lookup ⟹ Obtener direcciones a partir de su id (CID?)
+- /lookup ⟹ Obtener direcciones a partir de su id o du forma canónica (CID?)
 - /doc, /help ⟹ Consultar la documentación (devuelve este documento más o menos)
 
 Una propuesta para facilitar el uso por parte de los desarrolladores es si se invoca `URL+endpoint` sin parámetros, o sea nada a partir de `?` devuelver una especie de capability. Una docuemto donde se especifique qué contiene cada parámetro y qué se espera obtener como respuesta.
 
-### Búsqueda de Direcciones o Geocodificación
+### Búsqueda de Direcciones
 
       https://api.address4all.org/search?<params>
 
 La consulta puede especificarse con los siguientes parámetros:
 
 - `q=<query>` Cadena de texto libre para buscar
-- `a=<address>` Dirección estandarizada según la Nomenclatura Predial Urbana
+- `format=<value>` Formato de salida. Defautl `json`, también puede ser `geojson` y `geocodejson` que incluyen geocodificación
 
 Búsqueda estructurada: Añadir parámetros separados por coma `,`. Estos son algunos de los propuestos por Nominatim, habría que mirar los niveles administrativos y otras propiedades para adaptarlos a nuesto caso.
 
@@ -40,16 +40,25 @@ Parámetros adicionales: Su objetvo es acotar el alcance de la búsqueda así co
 
 - `limit=<integer>` Cantidad de resultados retornados.
 - `viewbox|bbox=<lon1>,<lat1>,<lon2>,<lat2>`
+- `bounded=[0|1]`
+- `near=<lon>,<lat>`
+- `offset=<value>`
+- `in=<geometry>` :question:
+- `out=<geometry>` :question:
 
-### Recuperación de direcciones
+### Geocodificación
 
-La recuperación permite obetener una o varias direcciones a partir de su CID.
-
-El API de búsqueda tiene el siguiente formato:
+Devuelve una o varias direcciones a partir de su CID.
 
       https://api.address4all.org/lookup?cids=<value>,…,<value>&<params>
 
 - `cids=<value>,…,<value>`
+
+Devuelve una o varias direcciones a partir de la forma canónica o estandraizada segun la Nomenclatura Predial Urbana.
+
+      https://api.address4all.org/lookup?cids=<value>,…,<value>&<params>
+
+- `cads=<value>,…,<value>`
 
 ### Geocodificación Inversa
 
@@ -57,8 +66,8 @@ El API de búsqueda tiene el siguiente formato:
 
 - `lon=<value>`
 - `lat=<value>`
-- `offset=<vlue>` Default `radius=3m`
-- `limit=<velue>` Junto con `offset` _(las N direcciones más cercanas)_
+- `offset=<value>` Default `radius=3m`
+- `limit=<value>` Junto con `offset` _(las N direcciones más cercanas)_
 - `geom=<geometry>` :question:
 
 ### Obeter una dirección a partir de un punto
@@ -89,9 +98,10 @@ LIMIT 1;
 
 - **GET** `/search`
 - **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
-- **GET|POST** `/search?a=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+<!-- - **GET|POST** `/search?a=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]` -->
 - **GET** `/lookup`
 - **GET|POST** `/lookup?cids=<string>[,…,<string>]`
+- **GET|POST** `/lookup?cads=<string>[,…,<string>]`
 - **GET** `/reverse`
 - **GET|POST** `/reverse?lon=<integer>&lat=<integer>&{offset=3}&{limit=1}`
 - **GET|POST** `/reverse?lon=<integer>&lat=<integer>&[offset=<integer>]&[limit=<integer>]`
@@ -101,7 +111,16 @@ LIMIT 1;
 
 ## Respuesta
 
-- El API devuelve **en todos los casos** una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
+```json
+[
+  {
+    "address": "AK 19 # 135 - 30",
+    "display_name": "Avenida Carrera Santa Bárbara # 135 - 30"
+  }
+]
+```
+
+- El API devuelve una colección de objetos geográficos `FeatureCollection` codificada en forma de GeoJSON. Cada dirección está representada por un punto o sea un objeto del tipo `Feature` con `Feature.geometry.type = "Point"` y un grupo de propiedades `properties` que todavía requieren cierto grado de refinamiento.
   - `features.length() = 0`: la búnqueda no arrojó ningún resultado
   - `features.length() > 0`: la búnsqueda ha sido exitosa.
     - `features.length() = 1`: el resultado es exacto.
@@ -242,3 +261,4 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 11. <https://wiki.openstreetmap.org/wiki/Key:admin_level>
 12. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values>
 13. <https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear>
+14. <https://github.com/geocoders/geocodejson-spec/tree/master/draft>

@@ -93,7 +93,7 @@ LIMIT 1;
 - **GET** `/lookup`
 - **GET|POST** `/lookup?cids=<string>[,…,<string>]`
 - **GET** `/reverse`
-- - **GET|POST** `/reverse?lon=<integer>&lat=<integer>&{offset=3}&{limit=1}`
+- **GET|POST** `/reverse?lon=<integer>&lat=<integer>&{offset=3}&{limit=1}`
 - **GET|POST** `/reverse?lon=<integer>&lat=<integer>&[offset=<integer>]&[limit=<integer>]`
 - **POST** `/reverse?geom=<object>&[limit=<integer>]` :question:
 - **GET** `/doc`

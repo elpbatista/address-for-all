@@ -130,7 +130,8 @@ LIMIT 1;
 ## 3. Consultas al API
 
 - **GET** `/search`
-- **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&viewbox=<integer>,<integer>,<integer>,<integer>]`
+- **GET|POST** `/search?q=<string>&[city=<string>]&[country=<string>]&[state=<string>]&[postalcode=<string>]&[limit=<integer>]&[viewbox=<integer>,<integer>,<integer>,<integer>]&[bounded=1]`
+- **GET|POST** `/search?q=<string>&lon=<integer>&lat=<integer>&[offset=<integer>]&[limit=<integer>]`
 - **GET** `/lookup`
 - **GET|POST** `/lookup?cids=<string>[,…,<string>]`
 - **GET|POST** `/lookup?cads=<string>[,…,<string>]`
@@ -230,6 +231,8 @@ Devuelve el metadato a partir de na dirección estandarizada
 
 1. Es imperativo definir una convención para las etiquetas, los nombres de las propiedades, funciones, variables, incluso para los contenidos. Por favor agregar la referencia si es que ya existe.
 2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar una mayor precisión para representarlas es totalmente innecesario. Esto reduciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa el cálculo de operaciones espaciales, haciéndolo mucho más ágil/eficiente.
+3. Esplorar otras consultas espaciales a partir de nuevos casos de uso y proponer endpoints para resolverlas.
+4. Va a ser preciso diseñar consultas de prueba para estimar la calidad de los datos y probablemente generar vistas consolidadas para soportar los micro servicios.
 
 ### 6.1. Nomenclatura Predial Urbana
 

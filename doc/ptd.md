@@ -12,16 +12,23 @@
 
 ## 1. Definición, diseño y captura de requisitos
 
+
 ### 1.1. Tareas
+
+- [x] Familiarización con el proyecto Address for All
+- [x] Captura de requisitos con Freedy, Peter...
+- [x] Recopilación de datos, documentación, casos de uso y experiencias similares
 
 ### 1.2. Entregables
 
-- [ ] Pliego de Requerimientos (SRS)
+- [x] Pliego de Requerimientos (SRS)
 - [ ] Acuerdo de Trabajo (SOW)
 
 ## 2. Implementación del Producto Mínimo Viable (MVP)
 
 ### 2.1. Tareas
+
+- [ ] Saneamiento de los datos
 
 ### 2.2. Entregables
 

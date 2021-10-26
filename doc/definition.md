@@ -317,3 +317,5 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 12. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values>
 13. <https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear>
 14. <https://github.com/geocoders/geocodejson-spec/tree/master/draft>
+15. <https://jqueryui.com/autocomplete/>
+16. <https://adresse.data.gouv.fr/api-doc/adresse>

@@ -12,7 +12,6 @@
 
 ## 1. Definición, diseño y captura de requisitos
 
-
 ### 1.1. Tareas
 
 - [x] Familiarización con el proyecto Address for All

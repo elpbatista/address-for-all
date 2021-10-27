@@ -172,7 +172,10 @@ Cuando `format=json`, valor por defecto en la búsqueda de direcciones, se devue
 ```json
 {
   "type": "FeatureCollection",
-  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+  "version":"",
+  "licence":"ODbL 1.0",
+  "query":"Avenida Carrera Santa Bárbara # 135",
+  "limit":1,
   "features": [
     {
       "type": "Feature",

@@ -33,7 +33,10 @@ LIMIT 40;
 -- 3061 vías
 -- 3061 vías con nombre
 --  183 nombres distintos
-SELECT jplanet_osm_roads.tags->>'name' AS via, COUNT(jplanet_osm_roads.tags->>'name') AS amnt
+SELECT COUNT(jplanet_osm_roads.tags->>'name') AS amnt,
+    jplanet_osm_roads.tags->>'name' AS via,
+    jplanet_osm_roads.tags->>'alt_name' AS otro,
+    jplanet_osm_roads.tags->>'nat_name' AS nacn
 FROM jplanet_osm_roads
 WHERE ST_Within(
         jplanet_osm_roads.way,
@@ -45,5 +48,5 @@ WHERE ST_Within(
     )
     AND jplanet_osm_roads.tags->>'highway' IS NOT NULL
     AND jplanet_osm_roads.tags->>'name' IS NOT NULL
-GROUP BY via
-ORDER BY amnt;
+GROUP BY via, otro, nacn
+ORDER BY amnt, via;

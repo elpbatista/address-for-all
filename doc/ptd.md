@@ -27,11 +27,13 @@
 
 ### 2.1. Tareas
 
-- [ ] Saneamiento de los datos
+- [ ] Auditoría de datos, estimación de calidad
+- [ ] Saneamiento y preparación de los datos
 
 ### 2.2. Entregables
 
-- [ ] v0.x
+- [ ] Evaluación de la calidad de los datos y propuesta de mejoras
+- [ ] Producto Mínimo Viable v0.x
 
 ## 3. Despliegue del entorno de producción
 

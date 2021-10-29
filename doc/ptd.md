@@ -25,6 +25,14 @@
 
 ## 2. Implementación del Producto Mínimo Viable (MVP)
 
+Estrategias de comprensión del lenguaje natural:
+
+- [ ] Procesamiento a nivel de motor (normalización)
+- [ ] Diccionarios
+- [ ] Procesamiento de consultas
+- [ ] Procesamiento del lenguaje natural (NLP) con reglas
+- [ ] Configuración de la tolerancia a los errores tipográficos
+
 ### 2.1. Tareas
 
 - [ ] Auditoría de datos, estimación de calidad

@@ -241,13 +241,13 @@ Devuelve el metadato a partir de na dirección estandarizada
 
 ```text
    vía          placa  complemento
-├───────┼─┼─────────────┼───────┤
-AV 6 BIS # 28 NORTE - 09 APT 201
-          ├────────┼─┼──┤
+├──────────────┼─────┼───────┤
+Calle 6 NORTE # 12-70 APT 201
+                ├─┼┼─┤
              cruce    distancia aproximada en metros
 ```
 
-- `vía` se correposnde con la vía principal.
+- `vía` se corresponde con la vía principal.
 - `cruce` también aparece como vía generadora.
 
 ### 6.2. Estandarización de Direcciones

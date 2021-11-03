@@ -190,7 +190,7 @@ Cuando `format=json`, valor por defecto en la búsqueda de direcciones, se devue
         "official_name": "",
         "alt_name": "",
         "old_name": "",
-        "address": "Calle 6 # 12-70",
+        "address": "CL 6 # 12-70",
         "housename": "",
         "display_name": "Calle 6 # 12-70",
         "city": "El Libano",

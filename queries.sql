@@ -31,7 +31,7 @@ LIMIT 40;
 -- 
 -- Medellín (SOM Planet)
 -- 3061 vías
--- 3061 vías con nombre
+-- 2134 vías con nombre
 --  183 nombres distintos
 SELECT COUNT(jplanet_osm_roads.tags->>'name') AS amnt,
     jplanet_osm_roads.tags->>'name' AS via,

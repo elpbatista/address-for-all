@@ -1,4 +1,4 @@
-# Definición  <!-- omit in toc -->
+# Definición <!-- omit in toc -->
 
 Este documetno es un borrador por lo que está sujeto a cambios, enmiendas, adiciones y correcciones hasta que todos quedemos conformes y se comparta la versión final a finales de esta semana, la cual vamos a usar como referencias para las posteriores etapas del proyecto.  
 Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que se retringirán al alcance del proyecto hasta donde ha sido concebido.
@@ -172,10 +172,10 @@ Cuando `format=json`, valor por defecto en la búsqueda de direcciones, se devue
 ```json
 {
   "type": "FeatureCollection",
-  "version":"",
-  "licence":"ODbL 1.0",
-  "query":"Calle 6 # 12-70",
-  "limit":1,
+  "version": "",
+  "licence": "ODbL 1.0",
+  "query": "Calle 6 # 12-70",
+  "limit": 1,
   "features": [
     {
       "type": "Feature",
@@ -294,6 +294,40 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 | `admin_level=8`  | Urbano: Localidad o Comuna, Rural: Vereda |             |
 | `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
 | `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
+
+Consulta para obtener algunos niveles administrativos de los datos de OSM a partir de las direcciones disponibles
+
+```SQL
+WITH administrative AS (
+ SELECT *
+ FROM jplanet_osm_polygon
+ WHERE tags->>'boundary' = 'administrative'
+  AND tags->>'admin_level' = '6'
+)
+SELECT administrative.tags->>'divipola' AS divipola,
+ SUBSTRING(administrative.tags->>'name', '^[^,]+') AS city,
+ administrative.tags->>'is_in:state' AS muni,
+ administrative.tags->>'is_in:country' AS country
+FROM teste_pts_medellin
+ JOIN administrative ON ST_Contains(administrative.way, teste_pts_medellin.geom)
+GROUP BY divipola,
+ city,
+ muni,
+ country;
+```
+
+Resultado de la consulta
+
+| `divipola` | `city`       | `state`   | `country` |
+| ---------- | ------------ | --------- | --------- |
+| 05656      | San Jerónimo | Antioquia | Colombia  |
+| 05615      | Rionegro     | Antioquia | Colombia  |
+| 05001      | Medellín     | Antioquia | Colombia  |
+| 05266      | Envigado     | Antioquia | Colombia  |
+| 05088      | Bello        | Antioquia | Colombia  |
+| 05318      | Guarne       | Antioquia | Colombia  |
+| 05360      | Itagüí       | Antioquia | Colombia  |
+| 05380      | La Estrella  | Antioquia | Colombia  |
 
 ### 6.5. Convenciones
 

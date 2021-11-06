@@ -116,7 +116,12 @@ GROUP BY divipola,
 -- 
 -- ########################################################################
 -- 
+SET session statement_timeout to 600000;
+-- 
+SHOW statement_timeout;
+-- 
 -- Indexing
+-- 
 DROP INDEX jplanet_osm_polygon_way_idx;
 -- 
 DROP INDEX teste_pts_medellin_geom_idx;
@@ -151,12 +156,16 @@ SELECT teste_pts_medellin.properties->>'via' AS via,
 	test_feature_asis_vias.properties->>'nombre_com' AS nombre_com
 FROM teste_pts_medellin,
 	test_feature_asis_vias
-WHERE ST_DWithin(
-		test_feature_asis_vias.geom,
-		teste_pts_medellin.geom,
-		10
+WHERE teste_pts_medellin.properties->>'via' = (
+		SELECT test_feature_asis_vias.properties->>'label'
+		FROM test_feature_asis_vias
+		WHERE ST_DWithin(
+				test_feature_asis_vias.geom,
+				teste_pts_medellin.geom,
+				5
+			)
+		LIMIT 1
 	)
-	AND teste_pts_medellin.properties->>'via' LIKE test_feature_asis_vias.properties->>'label'
 GROUP BY via,
 	nombre,
 	nombre_com;

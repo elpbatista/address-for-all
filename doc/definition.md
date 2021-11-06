@@ -295,7 +295,7 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 | `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
 | `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
 
-Consulta para obtener algunos niveles administrativos de los datos de OSM a partir de las direcciones disponibles
+Consulta para obtener algunos niveles administrativos de los datos de OSM a partir de las direcciones disponibles.
 
 ```SQL
 WITH administrative AS (
@@ -316,7 +316,7 @@ GROUP BY divipola,
  country;
 ```
 
-Resultado de la consulta
+Resultado de la consulta.
 
 | `divipola` | `city`       | `state`   | `country` |
 | ---------- | ------------ | --------- | --------- |

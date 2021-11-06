@@ -148,11 +148,17 @@ LIMIT 1;
 
 Cuando `format=json`, valor por defecto en la búsqueda de direcciones, se devuelve una arreglo de objetos con las propiedades `address` y `display_name` de las direcciones que satisfacen los criterios de la búsqueda.
 
+Como `address` puede repetirse en cada una de las ciudades de Colombia, especialmente cuando la vía principal y la vía generadora se identifican con números pequeños, hay que incluir alguna otra información que sirva para desambiguar. Podría ser solamente el `CID` pero todavía es necesario algo comprensible por humanos para mostrarle al usuario final que debe seleccionar cuál de los resultados devueltos es el que se corresponde con su búsqueda. La propuesta hasta ahora es inculuir `city`, `state` y `country` pero está abierta a modificaciones. (validar) :question:
+
 ```json
 [
   {
+    "CID": "",
     "address": "AK 19 # 135 - 30",
-    "display_name": "Avenida Carrera Santa Bárbara # 135 - 30"
+    "display_name": "Avenida Carrera Santa Bárbara # 135 - 30",
+    "city": "El Libano",
+    "state": "Tolima",
+    "country": "Colombia"
   }
 ]
 ```

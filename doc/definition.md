@@ -192,18 +192,18 @@ Como `address` puede repetirse en cada una de las ciudades de Colombia, especial
       "properties": {
         "CID": "",
         "attribution": "geoapps",
-        "common_name": "",
-        "official_name": "",
-        "alt_name": "",
-        "old_name": "",
-        "address": "CL 6 # 12-70",
+        "way_common_name": "",
+        "way_official_name": "",
+        "way_alt_name": "",
+        "way_old_name": "",
         "housename": "",
+        "address": "CL 6 # 12-70",
         "display_name": "Calle 6 # 12-70",
         "city": "El Libano",
         "state": "Tolima",
-        "postcode": "731040",
         "country": "Colombia",
         "country_code": "co",
+        "postcode": "731040",
         "divipolacode": "73411",
         "admin1": "N/A",
         "admin2": "Colombia",
@@ -242,6 +242,7 @@ Devuelve el metadato a partir de na dirección estandarizada
 2. Se recomienda truncar los valores de `lon`, `lat` a 5 (cinco, five) lugares decimales. Las direcciones postales están en el orden de los metros por lo que usar una mayor precisión para representarlas es totalmente innecesario. Esto reduciría considerablemente el tamaño de las geometrías almacenadas impactando de manera significativa el cálculo de operaciones espaciales, haciéndolo mucho más ágil/eficiente.
 3. Esplorar otras consultas espaciales a partir de nuevos casos de uso y proponer endpoints para resolverlas.
 4. Va a ser preciso diseñar consultas de prueba para estimar la calidad de los datos y probablemente generar vistas consolidadas para soportar los micro servicios.
+5. Definir a qué nivel vamos a incluir la `attribution`. ¿Se especificará la fuente de cada dirección individualmente o hay algún criterio para asignarla por lotes?
 
 ### 6.1. Nomenclatura Predial Urbana
 

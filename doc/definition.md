@@ -210,11 +210,11 @@ Como `address` puede repetirse en cada una de las ciudades de Colombia, especial
         "admin3": "",
         "admin4": "Tolima",
         "admin4": "Provincia de los Nevados",
-        "admin5": "Líbano",
-        "admin6": "",
+        "admin5": "",
+        "admin6": "Líbano",
         "admin7": "",
         "admin8": "Comuna 3",
-        "admin9": "El centro",
+        "admin9": "El Centro",
         "admin10": ""
       }
     }
@@ -289,18 +289,18 @@ Existen las direcciones atípicas, que no tienen la estructura descrita anterior
 
 Tomado de la especificación de uso de los Niveles Administrativos de OpenStreetMap. Se puede consultar [aquí](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values) `Ctrl+F Colombia`
 
-| `admin_level`    | Divisiones Adminstrativas de Colombia     | Alternativa |
-| ---------------- | ----------------------------------------- | ----------- |
-| `admin_level=1`  | N/A                                       |             |
-| `admin_level=2`  | País                                      | `country`   |
-| `admin_level=3`  | Región de planeación administrativa       |             |
-| `admin_level=4`  | Departamento                              | `state`     |
-| `admin_level=5`  | Provincia                                 |             |
-| `admin_level=6`  | Municipio                                 | `city`      |
-| `admin_level=7`  | Urbano: Ciudad, Rural: Corregimiento      |             |
-| `admin_level=8`  | Urbano: Localidad o Comuna, Rural: Vereda |             |
-| `admin_level=9`  | Urbano: Barrio, Rural: N/A                |             |
-| `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |             |
+| `admin_level`    | Divisiones Adminstrativas de Colombia     | Alternativa  |
+| ---------------- | ----------------------------------------- | ------------ |
+| `admin_level=1`  | N/A                                       |              |
+| `admin_level=2`  | País                                      | `country`    |
+| `admin_level=3`  | Región de planeación administrativa       |              |
+| `admin_level=4`  | Departamento                              | `state`      |
+| `admin_level=5`  | Provincia                                 |              |
+| `admin_level=6`  | Municipio                                 | `city`       |
+| `admin_level=7`  | Urbano: Ciudad, Rural: Corregimiento      |              |
+| `admin_level=8`  | Urbano: Localidad o Comuna, Rural: Vereda | `nombre_com` |
+| `admin_level=9`  | Urbano: Barrio, Rural: N/A                | `nombre_bar` |
+| `admin_level=10` | N/A (Barrios en Bogotá, también UPZs)     |              |
 
 Consulta para obtener algunos niveles administrativos de los datos de OSM a partir de las direcciones disponibles.
 

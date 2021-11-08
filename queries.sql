@@ -1,25 +1,43 @@
-SELECT jsonb_pretty(tags)
-FROM jplanet_osm_polygon
-WHERE tags->>'name' = 'Medellín';
+SET session statement_timeout to 600000;
 -- 
-SELECT jsonb_pretty(properties)
-FROM teste_pts_medellin
-LIMIT 5;
--- ST_AsText(way)
+SHOW statement_timeout;
+-- 
+-- Indexing
+-- 
+DROP INDEX jplanet_osm_polygon_way_idx;
+-- 
+DROP INDEX teste_pts_medellin_geom_idx;
+-- 
+DROP INDEX test_feature_asis_vias_geom_idx;
+--
+CREATE INDEX jplanet_osm_polygon_way_idx ON jplanet_osm_polygon USING GIST (way);
+-- 
+CREATE INDEX teste_pts_medellin_geom_idx ON teste_pts_medellin USING SPGIST (geom);
+-- 
+CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIST (geom);
+-- 
+-- 
+-- ST_AsGeoJSON(way)
 -- ST_Area(way)ß
-SELECT ST_AsGeoJSON(way)
+SELECT ST_AsText(way)
 FROM jplanet_osm_polygon
 WHERE tags->>'name' = 'Medellín';
 -- 
-SELECT jsonb_pretty(tags)
+SELECT tags
 FROM jplanet_osm_polygon
 WHERE tags->>'boundary' = 'administrative';
 -- 
-SELECT jsonb_pretty(tags)
+-- Buscando nombre de calles en las ways de OSM
+-- 
+SELECT tags->>'name' AS display_name, 
+	tags->>'alt_name'AS alt_name, 
+	tags->>'nat_name' AS nat_name,
+	tags->>'int_name' AS int_name
 FROM jplanet_osm_roads
 WHERE tags->>'highway' IS NOT NULL
 	AND tags->>'name' IS NOT NULL
-LIMIT 50;
+GROUP BY display_name, alt_name, nat_name, int_name;
+-- 
 -- Mejorar la regex queda un espacio al final
 SELECT DISTINCT SUBSTRING(properties->>'label', '^[^#]+') AS via,
 	properties->>'nombre_com' AS common_name,
@@ -116,23 +134,6 @@ GROUP BY divipola,
 -- 
 -- ########################################################################
 -- 
-SET session statement_timeout to 600000;
--- 
-SHOW statement_timeout;
--- 
--- Indexing
--- 
-DROP INDEX jplanet_osm_polygon_way_idx;
--- 
-DROP INDEX teste_pts_medellin_geom_idx;
--- 
-DROP INDEX test_feature_asis_vias_geom_idx;
---
-CREATE INDEX jplanet_osm_polygon_way_idx ON jplanet_osm_polygon USING GIST (way);
--- 
-CREATE INDEX teste_pts_medellin_geom_idx ON teste_pts_medellin USING SPGIST (geom);
--- 
-CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIST (geom);
 --
 WITH administrative AS (
 	SELECT *
@@ -150,22 +151,23 @@ FROM teste_pts_medellin
 	JOIN administrative ON ST_Contains(administrative.way, teste_pts_medellin.geom);
 -- 
 -- 
+-- ************************************************************************
 -- 
-SELECT teste_pts_medellin.properties->>'via' AS via,
-	test_feature_asis_vias.properties->>'via_name' AS nombre,
-	test_feature_asis_vias.properties->>'nombre_com' AS nombre_com
-FROM teste_pts_medellin,
-	test_feature_asis_vias
-WHERE teste_pts_medellin.properties->>'via' = (
-		SELECT test_feature_asis_vias.properties->>'label'
-		FROM test_feature_asis_vias
-		WHERE ST_DWithin(
-				test_feature_asis_vias.geom,
-				teste_pts_medellin.geom,
-				5
-			)
-		LIMIT 1
-	)
-GROUP BY via,
-	nombre,
-	nombre_com;
+SELECT	pts.properties->>'via' AS via,
+		vias.via_label AS labl,
+		pts.properties->>'house_number' AS addr_placa,	
+       	vias.via_name AS nombre,
+		vias.nombre_com AS nombrecom,
+		vias.dist
+FROM teste_pts_medellin pts
+CROSS JOIN LATERAL (
+	SELECT vias.properties->>'label' AS via_label,
+		vias.properties->>'via_name' AS via_name,
+		vias.properties->>'nombre_com' AS nombre_com,
+		vias.geom <-> pts.geom AS dist
+  	FROM test_feature_asis_vias vias
+	WHERE pts.properties->>'via' LIKE vias.properties->>'label'
+  	ORDER BY dist
+  	LIMIT 1
+) vias
+LIMIT 3000;

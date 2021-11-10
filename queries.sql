@@ -29,14 +29,17 @@ WHERE tags->>'boundary' = 'administrative';
 -- 
 -- Buscando nombre de calles en las ways de OSM
 -- 
-SELECT tags->>'name' AS display_name, 
-	tags->>'alt_name'AS alt_name, 
+SELECT tags->>'name' AS display_name,
+	tags->>'alt_name' AS alt_name,
 	tags->>'nat_name' AS nat_name,
 	tags->>'int_name' AS int_name
 FROM jplanet_osm_roads
 WHERE tags->>'highway' IS NOT NULL
 	AND tags->>'name' IS NOT NULL
-GROUP BY display_name, alt_name, nat_name, int_name;
+GROUP BY display_name,
+	alt_name,
+	nat_name,
+	int_name;
 -- 
 -- Mejorar la regex queda un espacio al final
 SELECT DISTINCT SUBSTRING(properties->>'label', '^[^#]+') AS via,
@@ -153,21 +156,59 @@ FROM teste_pts_medellin
 -- 
 -- ************************************************************************
 -- 
-SELECT	pts.properties->>'via' AS via,
-		vias.via_label AS labl,
-		pts.properties->>'house_number' AS addr_placa,	
-       	vias.via_name AS nombre,
-		vias.nombre_com AS nombrecom,
-		vias.dist
+SELECT pts.properties->>'via' AS via,
+	vias.via_label AS labl,
+	pts.properties->>'house_number' AS addr_placa,
+	vias.via_name AS nombre,
+	vias.nombre_com AS nombrecom,
+	vias.dist
 FROM teste_pts_medellin pts
-CROSS JOIN LATERAL (
-	SELECT vias.properties->>'label' AS via_label,
-		vias.properties->>'via_name' AS via_name,
-		vias.properties->>'nombre_com' AS nombre_com,
-		vias.geom <-> pts.geom AS dist
-  	FROM test_feature_asis_vias vias
-	WHERE pts.properties->>'via' LIKE vias.properties->>'label'
-  	ORDER BY dist
-  	LIMIT 1
-) vias
+	CROSS JOIN LATERAL (
+		SELECT vias.properties->>'label' AS via_label,
+			vias.properties->>'via_name' AS via_name,
+			vias.properties->>'nombre_com' AS nombre_com,
+			vias.geom <->pts.geom AS dist
+		FROM test_feature_asis_vias vias
+		WHERE pts.properties->>'via' LIKE vias.properties->>'label'
+		ORDER BY dist
+		LIMIT 1
+	) vias
 LIMIT 3000;
+-- 
+-- 
+-- ************************************************************************
+-- 5 min 39 sec
+-- ************************************************************************
+-- 
+WITH administrative AS (
+	SELECT *
+	FROM jplanet_osm_polygon
+	WHERE tags->>'boundary' = 'administrative'
+		AND tags->>'admin_level' = '6'
+)
+SELECT pts.properties->>'via' AS via,
+	pts.properties->>'house_number' AS placa,
+	pts.properties->>'tipo_cruce' AS cruce,
+	vias.via_name AS nombre,
+	vias.nombre_com AS nombrecom,
+	administrative.tags->>'divipola' AS divipola,
+	pts.properties->>'nombre_bar' AS barrio,
+	pts.properties->>'nombre_com' AS comunna,
+	SUBSTRING(administrative.tags->>'name', '^[^,]+') AS city,
+	administrative.tags->>'is_in:state' AS munipality,
+	administrative.tags->>'is_in:country' AS country,
+	vias.dist
+FROM teste_pts_medellin pts
+	LEFT JOIN administrative ON ST_Contains(administrative.way, pts.geom)
+	CROSS JOIN LATERAL (
+		SELECT vias.properties->>'label' AS via_label,
+			vias.properties->>'via_name' AS via_name,
+			vias.properties->>'nombre_com' AS nombre_com,
+			vias.geom <->pts.geom AS dist
+		FROM test_feature_asis_vias vias
+		WHERE pts.properties->>'via' LIKE vias.properties->>'label'
+		ORDER BY dist
+		LIMIT 1
+	) vias;
+-- WHERE vias.nombre_com IS NOT NULL
+-- LIMIT 3000;

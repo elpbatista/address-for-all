@@ -6,9 +6,9 @@ Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que
 - [1. URL](#1-url)
 - [2. Endpoints](#2-endpoints)
   - [2.1. Búsqueda de Direcciones](#21-búsqueda-de-direcciones)
-    - [Especificación de formato](#especificación-de-formato)
-    - [Búsqueda estructurada](#búsqueda-estructurada)
-    - [Parámetros adicionales](#parámetros-adicionales)
+    - [2.1.1. Especificación de formato](#211-especificación-de-formato)
+    - [2.1.2. Búsqueda estructurada](#212-búsqueda-estructurada)
+    - [2.1.3. Parámetros adicionales](#213-parámetros-adicionales)
   - [2.2. Geocodificación](#22-geocodificación)
   - [2.3. Geocodificación Inversa](#23-geocodificación-inversa)
   - [2.4. Obeter una dirección a partir de un punto](#24-obeter-una-dirección-a-partir-de-un-punto)
@@ -26,9 +26,10 @@ Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que
   - [6.1. Nomenclatura Predial Urbana](#61-nomenclatura-predial-urbana)
   - [6.2. Estandarización de Direcciones](#62-estandarización-de-direcciones)
   - [6.3. Direcciones Atípicas](#63-direcciones-atípicas)
-  - [6.4. Niveles administrativos](#64-niveles-administrativos)
-  - [6.5. Convenciones](#65-convenciones)
-    - [6.5.1. Notaciones](#651-notaciones)
+  - [6.4. Direcciones Postales](#64-direcciones-postales)
+  - [6.5. Niveles administrativos](#65-niveles-administrativos)
+  - [6.6. Convenciones](#66-convenciones)
+    - [6.6.1. Notaciones](#661-notaciones)
 - [7. Referencias](#7-referencias)
 
 ## 1. URL
@@ -54,11 +55,11 @@ Una propuesta para facilitar el uso por parte de los desarrolladores es si se in
 
 - `q=<query>` Cadena de texto libre para buscar
 
-#### Especificación de formato
+#### 2.1.1. Especificación de formato
 
 - `format=<value>` Formato de salida. Defautl `json`, si `geojson` incluye geocodificación
 
-#### Búsqueda estructurada
+#### 2.1.2. Búsqueda estructurada
 
 Lista de parámetros separados por coma `,`.
 
@@ -67,7 +68,7 @@ Lista de parámetros separados por coma `,`.
 - `state=<state>` ⟹ En Colombia Departamento `admin_level=4`
 - `postalcode=<postalcode>`
 
-#### Parámetros adicionales
+#### 2.1.3. Parámetros adicionales
 
 Su objetvo es acotar el alcance de la búsqueda así como la cantidad de resultados.
 
@@ -209,8 +210,7 @@ Como `address` puede repetirse en cada una de las ciudades de Colombia, especial
         "admin2": "Colombia",
         "admin3": "",
         "admin4": "Tolima",
-        "admin4": "Provincia de los Nevados",
-        "admin5": "",
+        "admin5": "Provincia de los Nevados",
         "admin6": "Líbano",
         "admin7": "",
         "admin8": "Comuna 3",
@@ -285,7 +285,17 @@ Existen las direcciones atípicas, que no tienen la estructura descrita anterior
 - Urbanización Villa Irina Manzana F Lote 9
 - Urbanización Villa de la Victoria Casa 12
 
-### 6.4. Niveles administrativos
+### 6.4. Direcciones Postales
+
+Rachel Arrieta  
+Calle 1 Norte #13-55 Apto. 902 `display_name`  
+Edificio Torre Alta `housename`  
+Fundadores 630004 `nombre_bar` _(Barrio)_ `postcode`  
+Armenia, Quindío `city` _(Municipio)_, `state` _(Departamento)_  
+Colombia `country`  
+Teléfono +57 320-302-1734
+
+### 6.5. Niveles administrativos
 
 Tomado de la especificación de uso de los Niveles Administrativos de OpenStreetMap. Se puede consultar [aquí](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values) `Ctrl+F Colombia`
 
@@ -336,9 +346,9 @@ Resultado de la consulta.
 | 05360      | Itagüí       | Antioquia | Colombia  |
 | 05380      | La Estrella  | Antioquia | Colombia  |
 
-### 6.5. Convenciones
+### 6.6. Convenciones
 
-#### 6.5.1. Notaciones
+#### 6.6.1. Notaciones
 
 - corchetes `[opcional]`
 - corchetes angulares `<requerido>`

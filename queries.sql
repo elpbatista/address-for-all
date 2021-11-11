@@ -16,10 +16,12 @@ CREATE INDEX teste_pts_medellin_geom_idx ON teste_pts_medellin USING SPGIST (geo
 -- 
 CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIST (geom);
 -- 
+CREATE SCHEMA api;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Successfully run. Total query runtime: 1 min 41 secs.
 -- 474520 rows affected.
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+CREATE MATERIALIZED VIEW api.search AS 
 WITH administrative AS (
 	SELECT *
 	FROM jplanet_osm_polygon

@@ -18,10 +18,7 @@ CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIS
 -- 
 CREATE SCHEMA api;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Successfully run. Total query runtime: 1 min 41 secs.
--- 474520 rows affected.
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-CREATE MATERIALIZED VIEW api.search AS 
+CREATE MATERIALIZED VIEW api.search AS -- 
 WITH administrative AS (
 	SELECT *
 	FROM jplanet_osm_polygon
@@ -31,7 +28,7 @@ WITH administrative AS (
 SELECT r._id AS _id,
 	r.geom AS geom,
 	jsonb_strip_nulls(
-		to_jsonb(r) #-'{_id}'#-'{geom}') AS properties
+		to_jsonb(r) #-'{geom}') AS properties
 		FROM (
 				SELECT pts.feature_id AS _id,
 					pts.geom AS geom,
@@ -94,3 +91,26 @@ SELECT r._id AS _id,
 						LIMIT 1
 					) nvias
 			) r;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Successfully run. Total query runtime: 1 min 29 secs.
+-- 474520 rows affected.
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- 
+CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
+-- 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT to_jsonb(r) AS result
+FROM (
+		SELECT *
+		FROM api.search s
+		WHERE ST_DWithin(
+				s.geom,
+				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326),
+				3
+			)
+		ORDER BY ST_Distance(
+				s.geom,
+				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326)
+			)
+		LIMIT 1
+	) r;

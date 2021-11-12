@@ -114,3 +114,34 @@ FROM (
 			)
 		LIMIT 1
 	) r;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--  As GeoJSON
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT json_build_object(
+		'type',
+		'FeatureCollection',
+		'features',
+		json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+	) AS result
+FROM (
+		SELECT geom,
+			properties->>'_id' AS _id,
+			properties->>'address' AS address,
+			properties->>'display_name' AS display_name,
+			properties->>'barrio' AS barrio,
+			properties->>'comunna' AS comunna,
+			properties->>'munipality' AS munipality,
+			properties->>'divipola' AS divipola,
+			properties->>'country' AS country
+		FROM api.search s
+		WHERE ST_DWithin(
+				s.geom,
+				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326),
+				3
+			)
+		ORDER BY ST_Distance(
+				s.geom,
+				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326)
+			)
+		LIMIT 1
+	) r;

@@ -99,7 +99,16 @@ SELECT r._id AS _id,
 CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
 -- 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT to_jsonb(r) AS result
+--  Returns a single Feature
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT json_build_object(
+		'type',
+		'Feature',
+		'geometry',
+		geom,
+		'properties',
+		properties
+	) AS result
 FROM (
 		SELECT *
 		FROM api.search s
@@ -115,7 +124,7 @@ FROM (
 		LIMIT 1
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  As GeoJSON
+--  Returns GeoJSON -> FeatureCollection
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT json_build_object(
 		'type',
@@ -145,3 +154,7 @@ FROM (
 			)
 		LIMIT 1
 	) r;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--  pb's Functions
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT api.get_address(-75.485480, 6.192462);

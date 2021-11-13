@@ -17,6 +17,8 @@ CREATE INDEX teste_pts_medellin_geom_idx ON teste_pts_medellin USING SPGIST (geo
 CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIST (geom);
 -- 
 CREATE SCHEMA api;
+-- 
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA api;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 CREATE MATERIALIZED VIEW api.search AS -- 
 WITH administrative AS (
@@ -27,6 +29,23 @@ WITH administrative AS (
 )
 SELECT r._id AS _id,
 	r.geom AS geom,
+	CONCAT(
+		r.address,
+		' ',
+		r.display_name,
+		' ',
+		r.barrio,
+		' ',
+		r.comuna,
+		' ',
+		r.city,
+		' ',
+		r.municipality,
+		' ',
+		r.divipola,
+		' ',
+		r.cruce
+	)::text AS q,
 	jsonb_strip_nulls(
 		to_jsonb(r) #-'{geom}') AS properties
 		FROM (
@@ -37,7 +56,11 @@ SELECT r._id AS _id,
 						' #',
 						pts.properties->>'house_number'
 					) AS address,
-					pts.properties->>'tipo_cruce' AS cruce,
+					CONCAT (
+						pts.properties->>'tipo_cruce',
+						' ',
+						SUBSTRING(pts.properties->>'house_number', '^[^-]+')
+					) AS cruce,
 					CONCAT(
 						CASE
 							pts.properties->>'tipo_via'
@@ -68,9 +91,9 @@ SELECT r._id AS _id,
 					nvias.nombre_com AS nombrecom,
 					administrative.tags->>'divipola' AS divipola,
 					pts.properties->>'nombre_bar' AS barrio,
-					pts.properties->>'nombre_com' AS comunna,
+					pts.properties->>'nombre_com' AS comuna,
 					SUBSTRING(administrative.tags->>'name', '^[^,]+') AS city,
-					administrative.tags->>'is_in:state' AS munipality,
+					administrative.tags->>'is_in:state' AS municipality,
 					administrative.tags->>'is_in:country' AS country
 				FROM teste_pts_medellin pts
 					LEFT JOIN administrative ON ST_Contains(administrative.way, pts.geom)
@@ -92,11 +115,13 @@ SELECT r._id AS _id,
 					) nvias
 			) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Successfully run. Total query runtime: 1 min 29 secs.
+-- Successfully run. Total query runtime: 1 min 47 secs.
 -- 474520 rows affected.
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- 
 CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
+CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops);
+CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
 -- 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Returns a single Feature
@@ -124,7 +149,7 @@ FROM (
 		LIMIT 1
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Returns GeoJSON -> FeatureCollection
+-- Returns a FeatureCollection
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT json_build_object(
 		'type',
@@ -138,8 +163,8 @@ FROM (
 			properties->>'address' AS address,
 			properties->>'display_name' AS display_name,
 			properties->>'barrio' AS barrio,
-			properties->>'comunna' AS comunna,
-			properties->>'munipality' AS munipality,
+			properties->>'comuna' AS comuna,
+			properties->>'municipality' AS municipality,
 			properties->>'divipola' AS divipola,
 			properties->>'country' AS country
 		FROM api.search s

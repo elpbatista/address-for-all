@@ -180,6 +180,30 @@ FROM (
 		LIMIT 1
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT *
+FROM api.search
+WHERE to_tsvector(q) @ @ to_tsquery('cl & cordoba & 52');
+-- tsvector?
+SELECT similarity('cl cordova 52', q) AS sim,
+	ts.properties AS prop
+FROM (
+		SELECT *
+		FROM api.search
+		WHERE to_tsvector(q) @ @ to_tsquery('cl & cordova & 52')
+	) ts
+ORDER BY sim DESC;
+-- 
+-- This is the way! (Typo)
+SELECT similarity('calle 99 52 castilla', q) AS sim,
+	q
+FROM api.search
+ORDER BY sim DESC
+LIMIT 10;
+-- 
+SELECT SHOW_TRGM('calle cordoba 52') AS cl52;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT api.get_address(-75.485480, 6.192462);

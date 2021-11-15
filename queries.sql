@@ -215,7 +215,46 @@ SELECT ST_AsText(
 		)
 	) As wktenv;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--  Search
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT similarity('CL 107 42 Popular', b.q) AS sim,
+	b.properties->>'address' AS address,
+	CONCAT(
+		b.properties->>'display_name',
+		' ',
+		b.properties->>'barrio',
+		' ',
+		b.properties->>'comuna',
+		' ',
+		b.properties->>'divipola',
+		' ',
+		b.properties->>'city'
+	) AS label
+FROM (
+		SELECT *
+		FROM api.search s
+		WHERE ST_Contains(
+				ST_SetSRID(
+					api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297),
+					4326
+				),
+				s.geom
+			)
+	) b
+-- WHERE similarity('CL 107 42 Popular', b.q) > 0
+ORDER BY sim DESC
+LIMIT 100;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT api.get_address(-75.485480, 6.192462);
-SELECT api.viewbox_to_polygon(array[-75.552,6.291,-75.543,6.297]);
+SELECT api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297);
+SELECT *
+FROM api.search s
+WHERE ST_Contains(
+		ST_SetSRID(
+			api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297),
+			4326
+		),
+		s.geom
+	);

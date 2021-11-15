@@ -29,7 +29,8 @@ Aquí deberá quedar plasmado y descrito cada uno de los requerimientos, los que
   - [6.4. Direcciones Postales](#64-direcciones-postales)
   - [6.5. Niveles administrativos](#65-niveles-administrativos)
   - [6.6. Convenciones](#66-convenciones)
-    - [6.6.1. Notaciones](#661-notaciones)
+    - [6.6.1. ViewBox](#661-viewbox)
+    - [6.6.2. Notaciones](#662-notaciones)
 - [7. Referencias](#7-referencias)
 
 ## 1. URL
@@ -355,7 +356,31 @@ Resultado de la consulta.
 
 ### 6.6. Convenciones
 
-#### 6.6.1. Notaciones
+#### 6.6.1. ViewBox
+
+`viewbox=<x1>,<y1>,<x2>,<y2>`
+
+Rpresenta el área donde preferida para la búsqueda. Cualquier par de coordenadas (esquinas) son aceptadas como entrada donde `X` es longitud y `Y` es latitud. Por razones obvias de las coordenadas que representan un punto o una lína no es posible obtener un polígono así que la búsqueda no arrojará ningún resultado.
+
+Polígono mínimo definido por las dos esquenas del bounding box  
+`((MINX, MINY), (MINX, MAXY), (MAXX, MAXY), (MAXX, MINY), (MINX, MINY))`
+
+```SQL
+SELECT ST_AsText(
+  ST_Envelope(
+   ST_Collect(
+    ST_Point(-75.552, 6.291),
+    ST_Point(-75.543, 6.297)
+   )
+  )
+ ) As wktenv;
+-- 
+wktenv
+-----------
+POLYGON((-75.552 6.291,-75.552 6.297,-75.543 6.297,-75.543 6.291,-75.552 6.291))
+```
+
+#### 6.6.2. Notaciones
 
 - corchetes `[opcional]`
 - corchetes angulares `<requerido>`
@@ -373,10 +398,9 @@ Resultado de la consulta.
 7. <https://www.datos.gov.co/widgets/gdxc-w37w>
 8. <https://muisca.dian.gov.co/WebRutMuisca/visor/formularios/f18/v4/direcciones/direcciones.jsp>
 9. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#10_admin_level_values_for_specific_countries>
-10. <https://postgis.net/docs/ST_Distance.html>
-11. <https://wiki.openstreetmap.org/wiki/Key:admin_level>
-12. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values>
-13. <https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear>
-14. <https://github.com/geocoders/geocodejson-spec/tree/master/draft>
-15. <https://jqueryui.com/autocomplete/>
-16. <https://adresse.data.gouv.fr/api-doc/adresse>
+10. <https://wiki.openstreetmap.org/wiki/Key:admin_level>
+11. <https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative#admin_level.3D.2A_Country_specific_values>
+12. <https://wiki.openstreetmap.org/wiki/ES:Colombia/Gu%C3%ADa_para_mapear>
+13. <https://github.com/geocoders/geocodejson-spec/tree/master/draft>
+14. <https://jqueryui.com/autocomplete/>
+15. <https://adresse.data.gouv.fr/api-doc/adresse>

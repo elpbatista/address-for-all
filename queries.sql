@@ -268,6 +268,7 @@ FROM (
 ORDER BY sim DESC;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Address Look Up (it accepts either address or _id)
+--  Potential conflict: properties->>'address' is not unique among the whole dataset
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT json_build_object(
     'type',

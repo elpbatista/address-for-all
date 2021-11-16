@@ -177,10 +177,10 @@ FROM (
 		WHERE ST_DWithin(
 				s.geom::geography,
 				ST_POINT(-75.486799, 6.194510),
-				5
+				150
 			)
 		) b
-		LIMIT 1
+		ORDER BY dist ASC
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Full Text
@@ -203,7 +203,7 @@ SELECT ST_AsText(
 		)
 	) As wktenv;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Search into ViewBox
+-- Full Text Search into a ViewBox
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT similarity('CL 107 42 Popular', r.q) AS sim,
 	r.properties->>'address' AS address,
@@ -233,7 +233,7 @@ FROM (
 ORDER BY sim DESC
 LIMIT 100;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Search into a given radious V1
+--  Full Text Search into a given radious V1
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT similarity('CL 107 42 Popular', r.q) AS sim,
 	r.dist AS dist,
@@ -265,7 +265,7 @@ FROM (
 	) r
 ORDER BY sim DESC;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  pb's Functions
+--  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT api.get_address(-75.486799, 6.194510);
 SELECT api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297);

@@ -119,6 +119,7 @@ SELECT r._id AS _id,
 -- 474520 rows affected.
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- 
+-- DROP INDEX search_geom_idx;
 CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
 CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops);
 CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
@@ -135,17 +136,17 @@ SELECT json_build_object(
 		properties
 	) AS result
 FROM (
-		SELECT *
-		FROM api.search s
+		SELECT *,
+			b.geom::geography <-> ST_POINT(-75.486799, 6.194510) as dist
+		FROM (
+			SELECT *
+			FROM api.search s
 		WHERE ST_DWithin(
-				s.geom,
-				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326),
-				3
+				s.geom::geography,
+				ST_POINT(-75.486799, 6.194510),
+				5
 			)
-		ORDER BY ST_Distance(
-				s.geom,
-				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326)
-			)
+		) b
 		LIMIT 1
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -167,42 +168,29 @@ FROM (
 			properties->>'municipality' AS municipality,
 			properties->>'divipola' AS divipola,
 			properties->>'country' AS country
-		FROM api.search s
+		FROM (
+		SELECT *,
+			b.geom::geography <-> ST_POINT(-75.486799, 6.194510) as dist
+		FROM (
+			SELECT *
+			FROM api.search s
 		WHERE ST_DWithin(
-				s.geom,
-				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326),
-				3
+				s.geom::geography,
+				ST_POINT(-75.486799, 6.194510),
+				5
 			)
-		ORDER BY ST_Distance(
-				s.geom,
-				ST_SetSRID(ST_MakePoint(-75.485480, 6.192462), 4326)
-			)
+		) b
 		LIMIT 1
 	) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Full Text
+SELECT SHOW_TRGM('calle cordoba 52') AS cl52;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT *
-FROM api.search
-WHERE to_tsvector(q) @ @ to_tsquery('cl & cordoba & 52');
--- tsvector?
-SELECT similarity('cl cordova 52', q) AS sim,
-	ts.properties AS prop
-FROM (
-		SELECT *
-		FROM api.search
-		WHERE to_tsvector(q) @ @ to_tsquery('cl & cordova & 52')
-	) ts
-ORDER BY sim DESC;
--- 
--- This is the way! (Typo)
 SELECT similarity('calle 99 52 castilla', q) AS sim,
 	q
 FROM api.search
 ORDER BY sim DESC
 LIMIT 10;
--- 
-SELECT SHOW_TRGM('calle cordoba 52') AS cl52;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  ViewBox to POLYGON
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -215,20 +203,20 @@ SELECT ST_AsText(
 		)
 	) As wktenv;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Search
+--  Search into ViewBox
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT similarity('CL 107 42 Popular', b.q) AS sim,
-	b.properties->>'address' AS address,
+SELECT similarity('CL 107 42 Popular', r.q) AS sim,
+	r.properties->>'address' AS address,
 	CONCAT(
-		b.properties->>'display_name',
+		r.properties->>'display_name',
 		' ',
-		b.properties->>'barrio',
+		r.properties->>'barrio',
 		' ',
-		b.properties->>'comuna',
+		r.properties->>'comuna',
 		' ',
-		b.properties->>'divipola',
+		r.properties->>'divipola',
 		' ',
-		b.properties->>'city'
+		r.properties->>'city'
 	) AS label
 FROM (
 		SELECT *
@@ -240,21 +228,44 @@ FROM (
 				),
 				s.geom
 			)
-	) b
+	) r
 -- WHERE similarity('CL 107 42 Popular', b.q) > 0
 ORDER BY sim DESC
 LIMIT 100;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--  Search into a given radious V1
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT similarity('CL 107 42 Popular', r.q) AS sim,
+	r.dist AS dist,
+	r.properties->>'address' AS address,
+	CONCAT(
+		r.properties->>'display_name',
+		' ',
+		r.properties->>'barrio',
+		' ',
+		r.properties->>'comuna',
+		' ',
+		r.properties->>'divipola',
+		' ',
+		r.properties->>'city'
+	) AS label
+FROM (
+		SELECT *,
+			b.geom::geography <-> ST_POINT(-75.486799, 6.194510) as dist
+		FROM (
+			SELECT *
+			FROM api.search s
+		WHERE ST_DWithin(
+				s.geom::geography,
+				ST_POINT(-75.486799, 6.194510),
+				200
+			)
+		) b
+		ORDER BY dist ASC
+	) r
+ORDER BY sim DESC;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT api.get_address(-75.485480, 6.192462);
+SELECT api.get_address(-75.486799, 6.194510);
 SELECT api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297);
-SELECT *
-FROM api.search s
-WHERE ST_Contains(
-		ST_SetSRID(
-			api.viewbox_to_polygon(-75.552,6.291,-75.543,6.297),
-			4326
-		),
-		s.geom
-	);

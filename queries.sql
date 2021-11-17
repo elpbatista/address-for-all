@@ -286,57 +286,35 @@ FROM (
       OR s.properties->>'_id' = '443091'
   ) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Respnse Format
+-- Respnse Formating V1.0
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT CASE
-    count(r)
-    WHEN 1 THEN json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+    j.features_count
+    WHEN 1 THEN j.features
     ELSE json_build_object(
       'type',
       'FeatureCollection',
       'features',
-      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+      j.features
     )
   END AS response
 FROM (
-    SELECT s.geom,
-      s.properties->>'_id' AS _id,
-      s.properties->>'address' AS address,
-      s.properties->>'display_name' AS display_name,
-      s.properties->>'barrio' AS barrio,
-      s.properties->>'comuna' AS comuna,
-      s.properties->>'municipality' AS municipality,
-      s.properties->>'divipola' AS divipola,
-      s.properties->>'country' AS country
-    FROM api.search s
-    LIMIT 1
-  ) r;
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Respnse Format V1.0
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT CASE
-    count(r)
-    WHEN 1 THEN json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
-    ELSE json_build_object(
-      'type',
-      'FeatureCollection',
-      'features',
-      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
-    )
-  END AS response
-FROM (
-    SELECT s.geom,
-      s.properties->>'_id' AS _id,
-      s.properties->>'address' AS address,
-      s.properties->>'display_name' AS display_name,
-      s.properties->>'barrio' AS barrio,
-      s.properties->>'comuna' AS comuna,
-      s.properties->>'municipality' AS municipality,
-      s.properties->>'divipola' AS divipola,
-      s.properties->>'country' AS country
-    FROM api.search s
-    LIMIT 1
-  ) r;
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM api.search s
+        LIMIT 3
+      ) r
+  ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	

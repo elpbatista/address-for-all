@@ -235,7 +235,7 @@ WHERE similarity('CL 107 42 Popular', b.q) > 0
 ORDER BY sim DESC
 LIMIT 100;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Full Text Search into a given radious V1
+--  Full Text Search into a given radious V1.0
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT similarity('CL 107 42 Popular', r.q) AS sim,
   r.dist AS dist,
@@ -267,27 +267,79 @@ FROM (
   ) r
 ORDER BY sim DESC;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Address Look Up (it accepts either address or _id)
---  Potential conflict: properties->>'address' isn't unique among the whole dataset
---  It should be considered to return a  FeatureCollection instead a single Feature
+-- Address Look Up (it accepts either address or _id)
+-- Potential conflict: address is not unique among the whole dataset 
+-- It should be considered to return a  FeatureCollection instead a single Feature
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT json_build_object(
-    'type',
-    'Feature',
-    'geometry',
+    ' type ',
+    ' Feature ',
+    ' geometry ',
     geom,
-    'properties',
+    ' properties ',
     properties
   ) AS result
 FROM (
     SELECT *
     FROM api.search s
-    WHERE s.properties->>'address' = 'CL 1BB #48A ESTE-522 (0130)'
+    WHERE s.properties->>' address ' = ' CL 1BB #48A ESTE-522 (0130)'
       OR s.properties->>'_id' = '443091'
   ) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---  Testing pb's Functions
+-- Respnse Format
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT CASE
+    count(r)
+    WHEN 1 THEN json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+    )
+  END AS response
+FROM (
+    SELECT s.geom,
+      s.properties->>'_id' AS _id,
+      s.properties->>'address' AS address,
+      s.properties->>'display_name' AS display_name,
+      s.properties->>'barrio' AS barrio,
+      s.properties->>'comuna' AS comuna,
+      s.properties->>'municipality' AS municipality,
+      s.properties->>'divipola' AS divipola,
+      s.properties->>'country' AS country
+    FROM api.search s
+    LIMIT 1
+  ) r;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Respnse Format V1.0
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT CASE
+    count(r)
+    WHEN 1 THEN json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
+    )
+  END AS response
+FROM (
+    SELECT s.geom,
+      s.properties->>'_id' AS _id,
+      s.properties->>'address' AS address,
+      s.properties->>'display_name' AS display_name,
+      s.properties->>'barrio' AS barrio,
+      s.properties->>'comuna' AS comuna,
+      s.properties->>'municipality' AS municipality,
+      s.properties->>'divipola' AS divipola,
+      s.properties->>'country' AS country
+    FROM api.search s
+    LIMIT 1
+  ) r;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--  Testing pb's Functions
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 SELECT api.get_address(-75.486799, 6.194510);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.address_lookup('CL 1BB #48A ESTE-522 (0130)');

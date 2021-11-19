@@ -331,19 +331,19 @@ WITH administrative AS (
 )
 SELECT administrative.tags->>'divipola' AS divipola,
  SUBSTRING(administrative.tags->>'name', '^[^,]+') AS city,
- administrative.tags->>'is_in:state' AS muni,
+ administrative.tags->>'is_in:state' AS _state,
  administrative.tags->>'is_in:country' AS country
 FROM teste_pts_medellin
  JOIN administrative ON ST_Contains(administrative.way, teste_pts_medellin.geom)
 GROUP BY divipola,
  city,
- muni,
+ _state,
  country;
 ```
 
 Resultado de la consulta.
 
-| `divipola` | `city`       | `state`   | `country` |
+| `divipola` | `city`       | `_state`  | `country` |
 | ---------- | ------------ | --------- | --------- |
 | 05656      | San Jerónimo | Antioquia | Colombia  |
 | 05615      | Rionegro     | Antioquia | Colombia  |
@@ -374,7 +374,7 @@ SELECT ST_AsText(
    )
   )
  ) As wktenv;
--- 
+--
 wktenv
 -----------
 POLYGON((-75.552 6.291,-75.552 6.297,-75.543 6.297,-75.543 6.291,-75.552 6.291))

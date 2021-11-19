@@ -271,14 +271,7 @@ ORDER BY sim DESC;
 -- Potential conflict: address is not unique among the whole dataset 
 -- It should be considered to return a  FeatureCollection instead a single Feature
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT json_build_object(
-    ' type ',
-    ' Feature ',
-    ' geometry ',
-    geom,
-    ' properties ',
-    properties
-  ) AS result
+SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json)
 FROM (
     SELECT *
     FROM api.search s

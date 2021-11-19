@@ -122,17 +122,18 @@ Devuelve las cantidad de direcciones especificadas en `limit` más cercana al pu
 A continuación aparece una simulación de como podría ser la consulta a la base de datos de PostgreSQL+QGIS donde está soportado el servicio. Los etiquetas no son precisas, `"address"` y `"addresses"` no necesariramente se corresponden con la BD, esto es solo un ejemplo. También podrían probarse otros métodos en pos de encontrar el desempeño óptimo.
 
 ```sql
-SELECT *
-FROM api.search s
-WHERE ST_DWithin(
-  s.geom,
-  ST_SetSRID(ST_MakePoint(lon, lat), 4326),
-  offset
- )
-ORDER BY ST_Distance(
-  s.geom,
-  ST_SetSRID(ST_MakePoint(lon, lat), 4326)
- )
+SELECT *,
+   b.geom::geography <-> ST_POINT(lon, lat) as dist
+  FROM (
+   SELECT *
+   FROM api.search s
+  WHERE ST_DWithin(
+    s.geom::geography,
+    ST_POINT(lon, lat),
+    radious
+   )
+  ) b
+ORDER BY dist
 LIMIT 1;
 ```
 

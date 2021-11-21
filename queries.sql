@@ -230,8 +230,8 @@ FROM (
         ),
         s.geom
       )
-  ) r - -
-WHERE similarity('CL 107 42 Popular', b.q) > 0
+  ) r
+WHERE similarity('CL 107 42 Popular', r.q) > 0
 ORDER BY sim DESC
 LIMIT 100;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -309,9 +309,61 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search generic
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    similarity('CL 107 42 Popular', bbox.q) AS sim
+  FROM (
+      SELECT *
+      FROM api.search
+      WHERE ST_Contains(
+          ST_SetSRID(
+            api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
+            4326
+          ),
+          geom
+        )
+    ) bbox
+  ORDER BY sim DESC
+  LIMIT 100
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.sim > 0
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 SELECT api.get_address(-75.486799, 6.194510);
+SELECT api.get_addresses_near(-75.486799, 6.194510, 500);
+SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.address_lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.address_lookup('443091');

@@ -367,3 +367,4 @@ SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.address_lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.address_lookup('443091');
+SELECT api.search('CL 107 42 Popular');

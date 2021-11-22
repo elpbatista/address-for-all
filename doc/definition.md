@@ -91,7 +91,7 @@ Devuelve una o varias direcciones a partir de su CID.
 
 Devuelve una o varias direcciones a partir de la forma canónica o estandraizada segun la Nomenclatura Predial Urbana.
 
-      https://api.address4all.org/lookup?cids=<value>,…,<value>&<params>
+      https://api.address4all.org/lookup?cads=<value>,…,<value>&<params>
 
 - `cads=<value>,…,<value>`
 

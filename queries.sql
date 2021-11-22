@@ -414,14 +414,5 @@ SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.address_lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.address_lookup('443091');
 SELECT api.search('CL 107 42 Popular', 10);
-SELECT api.search_bounded(
-    'CL 107 42 Popular',
-    ARRAY [-75.552, 6.291, -75.543, 6.297],
-    10
-  );
-SELECT api.search_nearby(
-    'CL 107 42 Popular',
-    ARRAY [-75.486799, 6.194510],
-    200,
-    10
-  );
+SELECT api.search_bounded('CL 107 42 Popular', ARRAY [-75.552, 6.291, -75.543, 6.297], 10);
+SELECT api.search_nearby('CL 107 42 Popular', ARRAY [-75.486799, 6.194510], 200, 10);

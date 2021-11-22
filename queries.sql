@@ -343,7 +343,8 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Reverse Geocoding filter params can be added in WHERE
+-- Reverse Geocoding 
+-- filter params can be added in WHERE
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH nearby AS (
   SELECT *,
@@ -358,7 +359,7 @@ WITH nearby AS (
         )
     ) b
   ORDER BY dist ASC
-	LIMIT 10
+  LIMIT 10
 )
 SELECT CASE
     j.features_count
@@ -385,7 +386,7 @@ FROM (
           s.properties->>'country' AS country
         FROM (
             SELECT *
-            FROM nearby 
+            FROM nearby
           ) s
       ) r
   ) j;

@@ -1,19 +1,15 @@
 SET session statement_timeout to 600000;
 -- 
 SHOW statement_timeout;
--- 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Indexing
--- 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 DROP INDEX jplanet_osm_polygon_way_idx;
--- 
 DROP INDEX teste_pts_medellin_geom_idx;
--- 
 DROP INDEX test_feature_asis_vias_geom_idx;
 --
 CREATE INDEX jplanet_osm_polygon_way_idx ON jplanet_osm_polygon USING GIST (way);
--- 
 CREATE INDEX teste_pts_medellin_geom_idx ON teste_pts_medellin USING SPGIST (geom);
--- 
 CREATE INDEX test_feature_asis_vias_geom_idx ON test_feature_asis_vias USING GIST (geom);
 -- 
 CREATE SCHEMA api;
@@ -115,17 +111,14 @@ SELECT r._id AS _id,
           ) nvias
       ) r;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Successfully run. Total query runtime: 1 min 47 secs.
--- 474520 rows affected.
+-- Indexing for the Search
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- 
 -- DROP INDEX search_geom_idx;
 CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
 CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops);
 CREATE INDEX search_properties_address_idx ON api.search USING GIN ((properties->'address'));
 CREATE INDEX search_properties_id_idx ON api.search USING GIN ((properties->'_id'));
 CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
--- 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Returns a single Feature
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -309,7 +302,7 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search generic
+-- Full Text Search Bounded
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH q AS (
   SELECT *,
@@ -359,6 +352,59 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search Near a Point
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    similarity('CL 107 42 Popular', nearby.q) AS sim
+  FROM (
+      SELECT *,
+        b.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
+      FROM (
+          SELECT *
+          FROM api.search s
+          WHERE ST_DWithin(
+              s.geom::geography,
+              ST_POINT(-75.486799, 6.194510),
+              200
+            )
+        ) b
+      ORDER BY dist ASC
+    ) nearby
+  ORDER BY sim DESC
+  LIMIT 100
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.sim > 0
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 SELECT api.get_address(-75.486799, 6.194510);
@@ -367,4 +413,15 @@ SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.address_lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.address_lookup('443091');
-SELECT api.search('CL 107 42 Popular',10);
+SELECT api.search('CL 107 42 Popular', 10);
+SELECT api.search_bounded(
+    'CL 107 42 Popular',
+    ARRAY [-75.552, 6.291, -75.543, 6.297],
+    10
+  );
+SELECT api.search_nearby(
+    'CL 107 42 Popular',
+    ARRAY [-75.486799, 6.194510],
+    200,
+    10
+  );

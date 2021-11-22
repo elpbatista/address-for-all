@@ -343,6 +343,53 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Reverse Geocoding filter params can be added in WHERE
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH nearby AS (
+  SELECT *,
+    b.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
+  FROM (
+      SELECT *
+      FROM api.search s
+      WHERE ST_DWithin(
+          s.geom::geography,
+          ST_POINT(-75.486799, 6.194510),
+          200
+        )
+    ) b
+  ORDER BY dist ASC
+	LIMIT 10
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM nearby 
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 SELECT api.get_address(-75.486799, 6.194510);
@@ -352,5 +399,16 @@ SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 SELECT api.lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.lookup('443091');
 SELECT api.search('CL 107 42 Popular', 10);
-SELECT api.search_bounded('CL 107 42 Popular', ARRAY [-75.552, 6.291, -75.543, 6.297], 10);
-SELECT api.search_nearby('CL 107 42 Popular', ARRAY [-75.486799, 6.194510], 200, 10);
+SELECT api.search_bounded(
+    'CL 107 42 Popular',
+    ARRAY [-75.552, 6.291, -75.543, 6.297],
+    10
+  );
+SELECT api.search_nearby(
+    'CL 107 42 Popular',
+    ARRAY [-75.486799, 6.194510],
+    200,
+    10
+  );
+SELECT api.reverse(-75.486799, 6.194510);
+SELECT api.reverse(-75.486799, 6.194510, 200, 10);

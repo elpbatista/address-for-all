@@ -397,6 +397,7 @@ SELECT api.get_address(-75.486799, 6.194510);
 SELECT api.get_addresses_near(-75.486799, 6.194510, 500);
 SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
+-- 
 SELECT api.lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.lookup('443091');
 SELECT api.search('CL 107 42 Popular', 10);
@@ -413,3 +414,5 @@ SELECT api.search_nearby(
   );
 SELECT api.reverse(-75.486799, 6.194510);
 SELECT api.reverse(-75.486799, 6.194510, 200, 10);
+-- 
+SELECT api.search('Calle 95 #69-61', 1);

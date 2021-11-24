@@ -18,6 +18,7 @@
       ]
     },
     "properties": {
+      "similarity": 0.28,
       "_id": "57338",
       "address": "CL 95 #69-61",
       "display_name": "Calle 95 #69-61",
@@ -31,7 +32,79 @@
 ]
 ```
 
-<http://api.addressforall.org/test/search?_q=CL%20107%2042%20Popular&lim=10>
+<http://api.addressforall.org/test/search?_q=CL%20107%2042%20Popular&lim=3>
+
+```json
+{
+  "type": "FeatureCollection",
+  "query": "CL 107 42 Popular",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.548216,
+          6.296636
+        ]
+      },
+      "properties": {
+        "similarity": 0.3148148,
+        "_id": "44088",
+        "address": "CL 107E #42C-42",
+        "display_name": "Calle 107E #42C-42",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.548093,
+          6.296
+        ]
+      },
+      "properties": {
+        "similarity": 0.3148148,
+        "_id": "340868",
+        "address": "CL 107C #42B-42",
+        "display_name": "Calle 107C #42B-42",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.54852,
+          6.296365
+        ]
+      },
+      "properties": {
+        "similarity": 0.3090909,
+        "_id": "185990",
+        "address": "CL 107D #42D-07",
+        "display_name": "Calle 107D #42D-07",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    }
+  ]
+}
+```
 
 #### RPC call
 
@@ -41,7 +114,7 @@
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search \
   -H 'Content-Type: application/json' \
-  -d '{"_q":"CL 107 42 Popular", "lim":3}'
+  -d '{"_q":"CL 107C #42B-42 Popular", "lim":3}'
 ```
 
 ### Search in a Bounding-box
@@ -50,7 +123,7 @@ curl -X POST \
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_bounded \
   -H 'Content-Type: application/json' \
-  -d '{"_q":"CL 107 42 Popular", "viewbox":[-75.552, 6.291, -75.543, 6.297], "lim":3}'
+  -d '{"_q":"CL 107C #42B-42 Popular", "viewbox":[-75.552, 6.291, -75.543, 6.297], "lim":3}'
 ```
 
 ### Search Nearby
@@ -59,7 +132,7 @@ curl -X POST \
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_nearby \
   -H 'Content-Type: application/json' \
-  -d '{"_q":"CL 107 42 Popular", "loc":[-75.486799, 6.194510],"radius":200, "lim":3}'
+  -d '{"_q":"Calle 1BB #48A ESTE-522 El Cerro", "loc":[-75.486799, 6.194510],"radius":200, "lim":3}'
 ```
 
 ## Reverse Geocoding

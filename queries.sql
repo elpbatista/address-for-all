@@ -25,23 +25,48 @@ WITH administrative AS (
 )
 SELECT r._id AS _id,
   r.geom AS geom,
-  CONCAT(
-    r.address,
-    ' ',
-    r.display_name,
-    ' ',
-    r.barrio,
-    ' ',
-    r.comuna,
-    ' ',
-    r.city,
-    ' ',
-    r.municipality,
-    ' ',
-    r.divipola,
-    ' ',
-    r.cruce
-  )::text AS q,
+  REPLACE(
+    (
+      lower(
+        CONCAT(
+          r.address,
+          ' ',
+          r.display_name,
+          ' ',
+          r.barrio,
+          ' ',
+          r.comuna
+        )
+      )::tsvector
+    )::text,
+    '''',
+    ''
+  ) AS spq,
+  REPLACE(
+    (
+      lower(
+        CONCAT(
+          r.address,
+          ' ',
+          r.display_name,
+          ' ',
+          r.barrio,
+          ' ',
+          r.comuna,
+          ' ',
+          r.city,
+          ' ',
+          r.municipality,
+          ' ',
+          r.divipola,
+          ' ',
+          r.cruce
+        )
+      )::tsvector
+    )::text,
+    '''',
+    ''
+  ) AS q,
   jsonb_strip_nulls(
     to_jsonb(r) #-'{geom}') AS properties
     FROM (
@@ -119,6 +144,7 @@ CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops
 CREATE INDEX search_properties_address_idx ON api.search USING GIN ((properties->'address'));
 CREATE INDEX search_properties_id_idx ON api.search USING GIN ((properties->'_id'));
 CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
+CREATE INDEX search_spq_trgm_idx ON api.search USING GIN (spq gin_trgm_ops);
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Returns a single Feature
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -240,11 +266,17 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search Bounded
+-- Full Text Search Bounded V1.0
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT REPLACE(
+		(lower('CL 107C #42B-42 Popular')::tsvector)::text,
+		'''',
+		''
+	);
+-- 
 WITH q AS (
   SELECT *,
-    similarity('CL 107 42 Popular', bbox.q) AS sim
+    similarity(lower('CL 107C #42B-42 Popular'), bbox.spq) AS sim
   FROM (
       SELECT *
       FROM api.search
@@ -255,7 +287,8 @@ WITH q AS (
           ),
           geom
         )
-    ) bbox
+    ) bbox -- 	
+    -- WHERE 'CL 107C #42B-42' % bbox.q
   ORDER BY sim DESC
   LIMIT 100
 )
@@ -265,6 +298,8 @@ SELECT CASE
     ELSE json_build_object(
       'type',
       'FeatureCollection',
+      'query',
+      'CL 107C #42B-42 Popular',
       'features',
       j.features
     )
@@ -274,6 +309,7 @@ FROM (
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
         SELECT s.geom,
+          s.sim AS similarity,
           s.properties->>'_id' AS _id,
           s.properties->>'address' AS address,
           s.properties->>'display_name' AS display_name,
@@ -400,12 +436,12 @@ SELECT api.lookup('CL 1BB #48A ESTE-522 (0130)');
 SELECT api.lookup('443091');
 SELECT api.search('CL 107 42 Popular', 10);
 SELECT api.search_bounded(
-    'CL 107 42 Popular',
+    'CL 107C #42B-42 Popular',
     ARRAY [-75.552, 6.291, -75.543, 6.297],
     10
   );
 SELECT api.search_nearby(
-    'CL 107 42 Popular',
+    'Calle 1BB #48A ESTE-522 El Cerro',
     ARRAY [-75.486799, 6.194510],
     200,
     10

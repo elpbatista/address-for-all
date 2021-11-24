@@ -269,10 +269,10 @@ FROM (
 -- Full Text Search Bounded V1.0
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT REPLACE(
-		(lower('CL 107C #42B-42 Popular')::tsvector)::text,
-		'''',
-		''
-	);
+    (lower('CL 107C #42B-42 Popular')::tsvector)::text,
+    '''',
+    ''
+  );
 -- 
 WITH q AS (
   SELECT *,
@@ -326,11 +326,11 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search Near a Point
+-- Full Text Search Near a Point V1.1
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH q AS (
   SELECT *,
-    similarity('CL 107 42 Popular', nearby.q) AS sim
+    similarity(lower('CL 107 42 Popular'), nearby.spq) AS sim
   FROM (
       SELECT *,
         b.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
@@ -363,6 +363,8 @@ FROM (
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
         SELECT s.geom,
+          s.sim AS similarity,
+          round(s.dist, 2) AS distance,
           s.properties->>'_id' AS _id,
           s.properties->>'address' AS address,
           s.properties->>'display_name' AS display_name,
@@ -379,7 +381,7 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Reverse Geocoding 
+-- Reverse Geocoding V1.0
 -- filter params can be added in WHERE
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH nearby AS (
@@ -412,6 +414,7 @@ FROM (
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
         SELECT s.geom,
+          round(s.dist, 2) AS distance,
           s.properties->>'_id' AS _id,
           s.properties->>'address' AS address,
           s.properties->>'display_name' AS display_name,

@@ -1,9 +1,5 @@
 # API Use Cases
 
-
-
-
-
 ## Full Text Search
 
 ### Generic Search
@@ -41,7 +37,7 @@
 
 <http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=3>
 
-```
+```batch
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search \
   -H 'Content-Type: application/json' \
@@ -50,7 +46,7 @@ curl -X POST \
 
 ### Search in a Bounding-box
 
-```
+```batch
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_bounded \
   -H 'Content-Type: application/json' \
@@ -59,7 +55,7 @@ curl -X POST \
 
 ### Search Nearby
 
-```
+```batch
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_nearby \
   -H 'Content-Type: application/json' \

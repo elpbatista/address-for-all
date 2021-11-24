@@ -255,7 +255,7 @@ Devuelve el metadato a partir de na dirección estandarizada
 
 ### 6.1. Nomenclatura Predial Urbana
 
-```text
+```
    vía          placa  complemento
 ├──────────────┼─────┼───────┤
 Calle 6 NORTE # 12-70 APT 201
@@ -323,7 +323,7 @@ Tomado de la especificación de uso de los Niveles Administrativos de OpenStreet
 
 Consulta para obtener algunos niveles administrativos de los datos de OSM a partir de las direcciones disponibles.
 
-```SQL
+```sql
 WITH administrative AS (
  SELECT *
  FROM jplanet_osm_polygon
@@ -366,7 +366,7 @@ Rpresenta el área donde preferida para la búsqueda. Cualquier par de coordenad
 Polígono mínimo definido por las dos esquenas del bounding box  
 `((MINX, MINY), (MINX, MAXY), (MAXX, MAXY), (MAXX, MINY), (MINX, MINY))`
 
-```SQL
+```sql
 SELECT ST_AsText(
   ST_Envelope(
    ST_Collect(

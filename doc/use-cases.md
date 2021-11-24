@@ -48,6 +48,8 @@ curl -X POST \
   -d '{"_q":"CL 107 42 Popular", "lim":3}'
 ```
 
+### Search in a Bounding-box
+
 ```
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_bounded \
@@ -55,6 +57,7 @@ curl -X POST \
   -d '{"_q":"CL 107 42 Popular", "viewbox":[-75.552, 6.291, -75.543, 6.297], "lim":3}'
 ```
 
+### Search Nearby
 
 ```
 curl -X POST \

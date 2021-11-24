@@ -4,7 +4,7 @@
 
 ## Schema Cache Reloading
 
-```
+```batch
 co_ba=# NOTIFY pgrst, 'reload schema';
 ```
 

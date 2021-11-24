@@ -151,6 +151,7 @@ curl -X POST \
       ]
     },
     "properties": {
+      "distance": 0.13,
       "_id": "443091",
       "address": "CL 1BB #48A ESTE-522 (0130)",
       "display_name": "Calle 1BB #48A ESTE-522 (0130)",
@@ -180,6 +181,7 @@ curl -X POST \
         ]
       },
       "properties": {
+        "distance": 0.13,
         "_id": "443091",
         "address": "CL 1BB #48A ESTE-522 (0130)",
         "display_name": "Calle 1BB #48A ESTE-522 (0130)",
@@ -200,6 +202,7 @@ curl -X POST \
         ]
       },
       "properties": {
+        "distance": 19.3,
         "_id": "360091",
         "address": "CL 1BB #48A ESTE-522 (0135)",
         "display_name": "Calle 1BB #48A ESTE-522 (0135)",
@@ -220,6 +223,7 @@ curl -X POST \
         ]
       },
       "properties": {
+        "distance": 67.78,
         "_id": "195150",
         "address": "CR 51 ESTE #1BB-149 (0103)",
         "display_name": "Circunvalar 51 ESTE #1BB-149 (0103)",

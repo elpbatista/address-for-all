@@ -1,10 +1,67 @@
 # API Use Cases
 
-<http://api.addressforall.org/test/search?_q=CL%20107%2042%20Popular&lim=10>
+
+
+
+
+## Full Text Search
+
+### Generic Search
 
 <http://api.addressforall.org/test/search?_q=Calle%2095%20%2369-61&lim=1>
 
-<http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=10>
+```json
+[
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -75.57377,
+        6.290209
+      ]
+    },
+    "properties": {
+      "_id": "57338",
+      "address": "CL 95 #69-61",
+      "display_name": "Calle 95 #69-61",
+      "barrio": "Castilla",
+      "comuna": "CASTILLA",
+      "municipality": "Antioquia",
+      "divipola": "05001",
+      "country": "Colombia"
+    }
+  }
+]
+```
+
+<http://api.addressforall.org/test/search?_q=CL%20107%2042%20Popular&lim=10>
+
+#### RPC call
+
+<http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=3>
+
+```
+curl -X POST \
+  http://api.addressforall.org/test/_sql/rpc/search \
+  -H 'Content-Type: application/json' \
+  -d '{"_q":"CL 107 42 Popular", "lim":3}'
+```
+
+```
+curl -X POST \
+  http://api.addressforall.org/test/_sql/rpc/search_bounded \
+  -H 'Content-Type: application/json' \
+  -d '{"_q":"CL 107 42 Popular", "viewbox":[-75.552, 6.291, -75.543, 6.297], "lim":3}'
+```
+
+
+```
+curl -X POST \
+  http://api.addressforall.org/test/_sql/rpc/search_nearby \
+  -H 'Content-Type: application/json' \
+  -d '{"_q":"CL 107 42 Popular", "loc":[-75.486799, 6.194510],"radius":200, "lim":3}'
+```
 
 ## Reverse Geocoding
 

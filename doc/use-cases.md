@@ -35,7 +35,7 @@
 ]
 ```
 
-<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510&radious=200&lim=3>  
+<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510&radius=200&lim=3>  
 
 ```json
 {

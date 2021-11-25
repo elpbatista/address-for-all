@@ -267,22 +267,23 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search Bounded V2.0
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-SELECT REPLACE(
-    (lower('CL 107C #42B-42 Popular')::tsvector)::text,
-    '''',
-    ''
-  );
--- 
+-- Full Text Search Generic V1.1
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+WITH q AS (
+  SELECT *,
+    similarity(lower('Calle 1BB #48A ESTE-522 El Cerro'), q) AS sim
+  FROM api.search
+  ORDER BY sim DESC
+  LIMIT 10
+)
 SELECT CASE
     j.features_count
     WHEN 1 THEN j.features
     ELSE json_build_object(
       'type',
       'FeatureCollection',
-      'query',
-      'CL 107C #42B-42 Popular',
+	  'query',
+      'Calle 1BB #48A ESTE-522 El Cerro',
       'features',
       j.features
     )
@@ -291,34 +292,115 @@ FROM (
     SELECT count(r) AS features_count,
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
-        SELECT geom,
-          1 - sim AS similarity,
-          properties->>'_id' AS _id,
-          properties->>'address' AS address,
-          properties->>'display_name' AS display_name,
-          properties->>'barrio' AS barrio,
-          properties->>'comuna' AS comuna,
-          properties->>'municipality' AS municipality,
-          properties->>'divipola' AS divipola,
-          properties->>'country' AS country
+        SELECT s.geom,
+		  s.sim AS similarity,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
         FROM (
-            SELECT *,
-              lower('CL 107C #42B-42 Popular') <->bbox.spq AS sim
-            FROM (
-                SELECT *
-                FROM api.search
-                WHERE ST_Contains(
-                    ST_SetSRID(
-                      api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
-                      4326
-                    ),
-                    geom
-                  )
-              ) bbox -- 	
-              --               WHERE 'CL 107C #42B-42' % bbox.q
-            ORDER BY sim
-            LIMIT 100
-          ) q
+            SELECT *
+            FROM q
+            WHERE q.sim > 0
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search Generic V2.0
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    lower('Calle 1BB #48A ESTE-522 El Cerro') <->q AS diff
+  FROM api.search
+  ORDER BY diff
+  LIMIT 10
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+	  'query',
+      'Calle 1BB #48A ESTE-522 El Cerro',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          1 - s.diff AS similarity,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.diff <.95
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search Bounded V2.0
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    lower('Calle 1BB #48A ESTE-522 El Cerro') <->q.spq AS diff
+  FROM (
+      SELECT *
+      FROM api.search
+      WHERE ST_Contains(
+          ST_SetSRID(
+            api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
+            4326
+          ),
+          geom
+        )
+    ) q
+  ORDER BY diff
+  LIMIT 10
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          1 - s.diff AS similarity,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.diff <.95
+          ) s
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -345,7 +427,7 @@ WITH q AS (
     ) nearby
   ORDER BY sim DESC,
     dist ASC
-  LIMIT 100
+  LIMIT 10
 )
 SELECT CASE
     j.features_count
@@ -376,6 +458,57 @@ FROM (
             SELECT *
             FROM q
             WHERE q.sim > 0
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search Near a Point V2.0
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    lower('Calle 1BB #48A ESTE-522 El Cerro') <->q.spq AS diff
+  FROM (
+      SELECT *
+      FROM (
+          SELECT *,
+            s.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
+          FROM api.search s
+        ) b
+      WHERE b.dist <= 200
+    ) q
+  ORDER BY diff,
+    dist
+  LIMIT 10
+)
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          1 - s.diff AS similarity,
+          round(s.dist, 2) AS distance,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.diff <.95
           ) s
       ) r
   ) j;

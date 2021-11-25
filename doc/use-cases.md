@@ -114,7 +114,7 @@ curl -X POST \
   -d '{"_q":"CL 107C #42B-42 Popular", "lim":3}'
 ```
 
-### 1.2. Search in a Bounding-box (Recomended!) :rocket:
+### 1.2. Search in a Bounding-box (Recomended!) :rocket: 
 
 ```batch
 curl -X POST \

@@ -138,13 +138,14 @@ SELECT r._id AS _id,
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Indexing for the Search
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- DROP INDEX search_geom_idx;
-CREATE INDEX search_geom_idx ON api.search USING SPGIST (geom);
+CREATE INDEX search_geom_sp_idx ON api.search USING SPGIST (geom);
+CREATE INDEX search_geom_idx ON api.search USING GIST (geom);
 CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops);
 CREATE INDEX search_properties_address_idx ON api.search USING GIN ((properties->'address'));
 CREATE INDEX search_properties_id_idx ON api.search USING GIN ((properties->'_id'));
 CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
-CREATE INDEX search_spq_trgm_idx ON api.search USING GIN (spq gin_trgm_ops);
+-- CREATE INDEX search_spq_trgm_idx ON api.search USING GIN (spq gin_trgm_ops);
+CREATE INDEX search_spq_trgm_idx ON api.search USING GIST (spq gist_trgm_ops);
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Returns a single Feature
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -266,7 +267,7 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search Bounded V1.0
+-- Full Text Search Bounded V2.0
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT REPLACE(
     (lower('CL 107C #42B-42 Popular')::tsvector)::text,
@@ -274,24 +275,6 @@ SELECT REPLACE(
     ''
   );
 -- 
-WITH q AS (
-  SELECT *,
-    similarity(lower('CL 107C #42B-42 Popular'), bbox.spq) AS sim
-  FROM (
-      SELECT *
-      FROM api.search
-      WHERE ST_Contains(
-          ST_SetSRID(
-            api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
-            4326
-          ),
-          geom
-        )
-    ) bbox -- 	
-    -- WHERE 'CL 107C #42B-42' % bbox.q
-  ORDER BY sim DESC
-  LIMIT 100
-)
 SELECT CASE
     j.features_count
     WHEN 1 THEN j.features
@@ -308,21 +291,34 @@ FROM (
     SELECT count(r) AS features_count,
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
-        SELECT s.geom,
-          s.sim AS similarity,
-          s.properties->>'_id' AS _id,
-          s.properties->>'address' AS address,
-          s.properties->>'display_name' AS display_name,
-          s.properties->>'barrio' AS barrio,
-          s.properties->>'comuna' AS comuna,
-          s.properties->>'municipality' AS municipality,
-          s.properties->>'divipola' AS divipola,
-          s.properties->>'country' AS country
+        SELECT geom,
+          1 - sim AS similarity,
+          properties->>'_id' AS _id,
+          properties->>'address' AS address,
+          properties->>'display_name' AS display_name,
+          properties->>'barrio' AS barrio,
+          properties->>'comuna' AS comuna,
+          properties->>'municipality' AS municipality,
+          properties->>'divipola' AS divipola,
+          properties->>'country' AS country
         FROM (
-            SELECT *
-            FROM q
-            WHERE q.sim > 0
-          ) s
+            SELECT *,
+              lower('CL 107C #42B-42 Popular') <->bbox.spq AS sim
+            FROM (
+                SELECT *
+                FROM api.search
+                WHERE ST_Contains(
+                    ST_SetSRID(
+                      api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
+                      4326
+                    ),
+                    geom
+                  )
+              ) bbox -- 	
+              --               WHERE 'CL 107C #42B-42' % bbox.q
+            ORDER BY sim
+            LIMIT 100
+          ) q
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -433,6 +429,47 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Reverse Geocoding V2.0
+-- filter params can be added in WHERE
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT CASE
+    j.features_count
+    WHEN 1 THEN j.features
+    ELSE json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+  END AS response
+FROM (
+    SELECT count(r) AS features_count,
+      json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT geom,
+          round(q.dist, 2) AS distance,
+          properties->>'_id' AS _id,
+          properties->>'address' AS address,
+          properties->>'display_name' AS display_name,
+          properties->>'barrio' AS barrio,
+          properties->>'comuna' AS comuna,
+          properties->>'municipality' AS municipality,
+          properties->>'divipola' AS divipola,
+          properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM (
+                SELECT *,
+                  s.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
+                FROM api.search s
+                ORDER BY dist ASC
+              ) b
+            WHERE b.dist <= 200
+            LIMIT 10
+          ) q
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
 SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
@@ -455,4 +492,5 @@ SELECT api.search_nearby(
 SELECT api.reverse(-75.486799, 6.194510);
 SELECT api.reverse(-75.486799, 6.194510, 200, 10);
 -- 
+EXPLAIN ANALYZE
 SELECT api.search('Calle 95 #69-61', 1);

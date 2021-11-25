@@ -1,8 +1,17 @@
-# API Use Cases
+# API Use Cases <!-- omit in toc -->
 
-## Full Text Search
+- [1. Full Text Search](#1-full-text-search)
+  - [1.1. Generic Search](#11-generic-search)
+    - [1.1.1. RPC call](#111-rpc-call)
+  - [1.2. Search in a Bounding-box (Recomended!) :rocket:](#12-search-in-a-bounding-box-recomended-rocket)
+  - [1.3. Search Nearby](#13-search-nearby)
+- [2. Reverse Geocoding](#2-reverse-geocoding)
+- [3. Address Lookup](#3-address-lookup)
+- [4. References](#4-references)
 
-### Generic Search
+## 1. Full Text Search
+
+### 1.1. Generic Search
 
 <http://api.addressforall.org/test/search?_q=Calle%2095%20%2369-61&lim=1>
 
@@ -94,7 +103,7 @@
 }
 ```
 
-#### RPC call
+#### 1.1.1. RPC call
 
 <http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=3>
 
@@ -105,7 +114,7 @@ curl -X POST \
   -d '{"_q":"CL 107C #42B-42 Popular", "lim":3}'
 ```
 
-### Search in a Bounding-box (Recomended!) :rocket:
+### 1.2. Search in a Bounding-box (Recomended!) :rocket:
 
 ```batch
 curl -X POST \
@@ -177,7 +186,7 @@ curl -X POST \
 }
 ```
 
-### Search Nearby
+### 1.3. Search Nearby
 
 ```batch
 curl -X POST \
@@ -252,7 +261,7 @@ curl -X POST \
 }
 ```
 
-## Reverse Geocoding
+## 2. Reverse Geocoding
 
 <http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510>
 
@@ -343,7 +352,7 @@ curl -X POST \
 }
 ```
 
-## Address Lookup
+## 3. Address Lookup
 
 <http://api.addressforall.org/test/lookup?address=443091>  
 <http://api.addressforall.org/test/lookup?address=CL%201BB%20%2348A%20ESTE-522%20%280130%29>
@@ -370,6 +379,6 @@ curl -X POST \
 }
 ```
 
-## References
+## 4. References
 
 1. <https://www.urlencoder.io>

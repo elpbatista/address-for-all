@@ -1,5 +1,7 @@
 SET session statement_timeout to 600000;
 -- 
+SET enable_seqscan=off;
+-- 
 SHOW statement_timeout;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Indexing
@@ -514,7 +516,6 @@ FROM (
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Reverse Geocoding V1.0
--- filter params can be added in WHERE
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH nearby AS (
   SELECT *,
@@ -562,7 +563,7 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Reverse Geocoding V2.0
+-- Reverse Geocoding V2.1
 -- filter params can be added in WHERE
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SELECT CASE
@@ -595,7 +596,7 @@ FROM (
                 SELECT *,
                   s.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
                 FROM api.search s
-                ORDER BY dist ASC
+                ORDER BY dist
               ) b
             WHERE b.dist <= 200
             LIMIT 10

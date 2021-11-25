@@ -326,11 +326,14 @@ FROM (
       ) r
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Full Text Search Near a Point V1.1
+-- Full Text Search Near a Point V1.2
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH q AS (
   SELECT *,
-    similarity(lower('CL 107 42 Popular'), nearby.spq) AS sim
+    similarity(
+      lower('Calle 1BB #48A ESTE-522 El Cerro'),
+      nearby.spq
+    ) AS sim
   FROM (
       SELECT *,
         b.geom::geography <->ST_POINT(-75.486799, 6.194510) as dist
@@ -343,9 +346,9 @@ WITH q AS (
               200
             )
         ) b
-      ORDER BY dist ASC
     ) nearby
-  ORDER BY sim DESC
+  ORDER BY sim DESC,
+    dist ASC
   LIMIT 100
 )
 SELECT CASE

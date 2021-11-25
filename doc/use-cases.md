@@ -12,10 +12,7 @@
     "type": "Feature",
     "geometry": {
       "type": "Point",
-      "coordinates": [
-        -75.57377,
-        6.290209
-      ]
+      "coordinates": [-75.57377, 6.290209]
     },
     "properties": {
       "similarity": 0.28,
@@ -43,10 +40,7 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.548216,
-          6.296636
-        ]
+        "coordinates": [-75.548216, 6.296636]
       },
       "properties": {
         "similarity": 0.3148148,
@@ -64,10 +58,7 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.548093,
-          6.296
-        ]
+        "coordinates": [-75.548093, 6.296]
       },
       "properties": {
         "similarity": 0.3148148,
@@ -85,10 +76,7 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.54852,
-          6.296365
-        ]
+        "coordinates": [-75.54852, 6.296365]
       },
       "properties": {
         "similarity": 0.3090909,
@@ -117,13 +105,76 @@ curl -X POST \
   -d '{"_q":"CL 107C #42B-42 Popular", "lim":3}'
 ```
 
-### Search in a Bounding-box
+### Search in a Bounding-box (Recomended!) :rocket:
 
 ```batch
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_bounded \
   -H 'Content-Type: application/json' \
   -d '{"_q":"CL 107C #42B-42 Popular", "viewbox":[-75.552, 6.291, -75.543, 6.297], "lim":3}'
+```
+
+```json
+{
+  "type": "FeatureCollection",
+  "query": "CL 107C #42B-42 Popular",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.548093, 6.296]
+      },
+      "properties": {
+        "similarity": 0.8076923,
+        "_id": "340868",
+        "address": "CL 107C #42B-42",
+        "display_name": "Calle 107C #42B-42",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.547945, 6.295895]
+      },
+      "properties": {
+        "similarity": 0.71428573,
+        "_id": "82402",
+        "address": "CL 107C #42B-18",
+        "display_name": "Calle 107C #42B-18",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.548163, 6.295952]
+      },
+      "properties": {
+        "similarity": 0.71428573,
+        "_id": "18106",
+        "address": "CL 107C #42B-47",
+        "display_name": "Calle 107C #42B-47",
+        "barrio": "Popular",
+        "comuna": "POPULAR",
+        "municipality": "Antioquia",
+        "divipola": "05001",
+        "country": "Colombia"
+      }
+    }
+  ]
+}
 ```
 
 ### Search Nearby
@@ -135,9 +186,75 @@ curl -X POST \
   -d '{"_q":"Calle 1BB #48A ESTE-522 El Cerro", "loc":[-75.486799, 6.194510],"radius":200, "lim":3}'
 ```
 
+```json
+{
+  "type": "FeatureCollection",
+  "query": "Calle 1BB #48A ESTE-522 El Cerro",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.4868, 6.194511]
+      },
+      "properties": {
+        "similarity": 0.63829786,
+        "distance": 0.13,
+        "_id": "443091",
+        "address": "CL 1BB #48A ESTE-522 (0130)",
+        "display_name": "Calle 1BB #48A ESTE-522 (0130)",
+        "barrio": "El Cerro",
+        "comuna": "SANTA ELENA",
+        "municipality": "Antioquia",
+        "divipola": "05266",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.486694, 6.194649]
+      },
+      "properties": {
+        "similarity": 0.63829786,
+        "distance": 19.3,
+        "_id": "360091",
+        "address": "CL 1BB #48A ESTE-522 (0135)",
+        "display_name": "Calle 1BB #48A ESTE-522 (0135)",
+        "barrio": "El Cerro",
+        "comuna": "SANTA ELENA",
+        "municipality": "Antioquia",
+        "divipola": "05266",
+        "country": "Colombia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.485823, 6.193292]
+      },
+      "properties": {
+        "similarity": 0.50980395,
+        "distance": 173.14,
+        "_id": "194489",
+        "address": "CL 1BB #48A ESTE-621 (0109)",
+        "display_name": "Calle 1BB #48A ESTE-621 (0109)",
+        "barrio": "El Cerro",
+        "comuna": "SANTA ELENA",
+        "municipality": "Antioquia",
+        "divipola": "05266",
+        "country": "Colombia"
+      }
+    }
+  ]
+}
+```
+
 ## Reverse Geocoding
 
-<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510>  
+<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510>
 
 ```json
 [
@@ -145,10 +262,7 @@ curl -X POST \
     "type": "Feature",
     "geometry": {
       "type": "Point",
-      "coordinates": [
-        -75.4868,
-        6.194511
-      ]
+      "coordinates": [-75.4868, 6.194511]
     },
     "properties": {
       "distance": 0.13,
@@ -165,7 +279,7 @@ curl -X POST \
 ]
 ```
 
-<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510&radius=200&lim=3>  
+<http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510&radius=200&lim=3>
 
 ```json
 {
@@ -175,10 +289,7 @@ curl -X POST \
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.4868,
-          6.194511
-        ]
+        "coordinates": [-75.4868, 6.194511]
       },
       "properties": {
         "distance": 0.13,
@@ -196,10 +307,7 @@ curl -X POST \
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.486694,
-          6.194649
-        ]
+        "coordinates": [-75.486694, 6.194649]
       },
       "properties": {
         "distance": 19.3,
@@ -217,10 +325,7 @@ curl -X POST \
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          -75.486234,
-          6.194748
-        ]
+        "coordinates": [-75.486234, 6.194748]
       },
       "properties": {
         "distance": 67.78,
@@ -248,10 +353,7 @@ curl -X POST \
   "type": "Feature",
   "geometry": {
     "type": "Point",
-    "coordinates": [
-      -75.4868,
-      6.194511
-    ]
+    "coordinates": [-75.4868, 6.194511]
   },
   "properties": {
     "_id": 443091,

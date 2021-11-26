@@ -6,8 +6,8 @@
   - [1.2. Búsqueda Delimitada Espacialmente (¡Recomendada!) :rocket:](#12-búsqueda-delimitada-espacialmente-recomendada-rocket)
     - [1.2.1. Búsqueda en un recuadro delimitado _Bounding-box_](#121-búsqueda-en-un-recuadro-delimitado-bounding-box)
     - [1.2.2. Búsqueda en las proximidades de un punto](#122-búsqueda-en-las-proximidades-de-un-punto)
-- [2. Reverse Geocoding](#2-reverse-geocoding)
-- [3. Address Lookup](#3-address-lookup)
+- [2. Geocodificación Inversa](#2-geocodificación-inversa)
+- [3. Recuperación de direcciones](#3-recuperación-de-direcciones)
 - [4. References](#4-references)
 
 ## 1. Búsqueda de Texto Completo
@@ -280,7 +280,7 @@ curl -X POST \
 }
 ```
 
-## 2. Reverse Geocoding
+## 2. Geocodificación Inversa
 
 <http://api.addressforall.org/test/reverse?lon=-75.486799&lat=6.194510>
 
@@ -371,7 +371,7 @@ curl -X POST \
 }
 ```
 
-## 3. Address Lookup
+## 3. Recuperación de direcciones
 
 <http://api.addressforall.org/test/lookup?address=443091>  
 <http://api.addressforall.org/test/lookup?address=CL%201BB%20%2348A%20ESTE-522%20%280130%29>

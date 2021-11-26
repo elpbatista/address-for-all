@@ -1,24 +1,24 @@
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Escenarios críticos que se pueden propiciar a partir de llamadas al API
+-- Critical scenarios that can be originated from API calls
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- 
--- Caso de Uso #1
--- Bucar todas las direcciones de Colombia
--- Devuelve una FeatureCollection con 474520 features
+-- Use Case #1
+-- Find all addresses in Colombia
+-- Returns a FeatureCollection with 474520 features
 SELECT api.search('Colombia', null);
 -- 
--- Caso de Uso #2
--- Devuelve todas las direcciones en un radio de 100km
--- Devuelve una FeatureCollection con 474520 features
+-- Use Case #2
+-- Find all addresses in a 100km radius
+-- Returns a FeatureCollection with 474520 features
 SELECT api.search_nearby(
-        'calle',
-        ARRAY [-75.486799, 6.194510],
-        100000,
-        null
-    );
+    'calle',
+    ARRAY [-75.486799, 6.194510],
+    100000,
+    null
+  );
 -- 	
--- Caso de Uso #3
--- Recuperar todas las direcciones como GeoJSON (features)
--- Devuelve 474520 filas
+-- Use Case #3
+-- Retrieve all addresses as GeoJSON (features)
+-- Returns 474520 rows
 SELECT api.lookup(properties->>'address') AS features
 FROM api.search;

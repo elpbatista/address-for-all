@@ -1,6 +1,6 @@
 SET session statement_timeout to 600000;
 -- 
-SET enable_seqscan=off;
+SET enable_seqscan = off;
 -- 
 SHOW statement_timeout;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -59,6 +59,8 @@ SELECT r._id AS _id,
           r.city,
           ' ',
           r.municipality,
+          ' ',
+          r.country,
           ' ',
           r.divipola,
           ' ',
@@ -284,7 +286,7 @@ SELECT CASE
     ELSE json_build_object(
       'type',
       'FeatureCollection',
-	  'query',
+      'query',
       'Calle 1BB #48A ESTE-522 El Cerro',
       'features',
       j.features
@@ -295,7 +297,7 @@ FROM (
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
         SELECT s.geom,
-		  s.sim AS similarity,
+          s.sim AS similarity,
           s.properties->>'_id' AS _id,
           s.properties->>'address' AS address,
           s.properties->>'display_name' AS display_name,
@@ -327,7 +329,7 @@ SELECT CASE
     ELSE json_build_object(
       'type',
       'FeatureCollection',
-	  'query',
+      'query',
       'Calle 1BB #48A ESTE-522 El Cerro',
       'features',
       j.features

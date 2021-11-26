@@ -131,6 +131,8 @@ En este tipo de búsqueda la cadena de entrada se compara con el contenido de lo
 
 #### 1.2.1. Búsqueda en un recuadro delimitado _Bounding-box_
 
+Es la que se usa en aplicaciones de WebMapping donde se puede obtener el recuadro correspondiente a la representación `viewbox` para pasárselo como argumento a la búsqueda además de la cadene en cuestión.
+
 ```batch
 curl -X POST \
   http://api.addressforall.org/test/_sql/rpc/search_bounded \
@@ -202,6 +204,8 @@ curl -X POST \
 ```
 
 #### 1.2.2. Búsqueda en las proximidades de un punto
+
+Encuentra las coindidencias más cercanas a una localización dada. Se le pasa una coordenada `loc=[lat, lon]` junto con la cadena de búsqueda. Devuele además de la similitud, la distancia al punto que recibe como parámetro en `properties.distance`.
 
 ```batch
 curl -X POST \

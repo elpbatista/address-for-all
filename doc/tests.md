@@ -2,6 +2,9 @@
 
 <http://api.addressforall.org/test/_sql/search>
 
+<http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=3>
+
+
 ## Schema Cache Reloading
 
 ```batch

@@ -1,17 +1,26 @@
-# API Use Cases <!-- omit in toc -->
+# API Casos de Uso <!-- omit in toc -->
 
-- [1. Full Text Search](#1-full-text-search)
-  - [1.1. Generic Search](#11-generic-search)
-    - [1.1.1. RPC call](#111-rpc-call)
-  - [1.2. Search in a Bounding-box (Recomended!) :rocket:](#12-search-in-a-bounding-box-recomended-rocket)
-  - [1.3. Search Nearby](#13-search-nearby)
+- [1. Búsqueda de Texto Completo](#1-búsqueda-de-texto-completo)
+  - [1.1. Búsqueda Genérica](#11-búsqueda-genérica)
+    - [1.1.1. Llamada RPC](#111-llamada-rpc)
+  - [1.2. Búsqueda Delimitada Espacialmente (¡Recomendada!) :rocket:](#12-búsqueda-delimitada-espacialmente-recomendada-rocket)
+    - [1.2.1. Búsqueda en un recuadro delimitado _Bounding-box_](#121-búsqueda-en-un-recuadro-delimitado-bounding-box)
+    - [1.2.2. Búsqueda en las proximidades de un punto](#122-búsqueda-en-las-proximidades-de-un-punto)
 - [2. Reverse Geocoding](#2-reverse-geocoding)
 - [3. Address Lookup](#3-address-lookup)
 - [4. References](#4-references)
 
-## 1. Full Text Search
+## 1. Búsqueda de Texto Completo
 
-### 1.1. Generic Search
+Recuperar direcciones como objetos geográficos GeoJSON, a partir de texto en lenguaje natural. Devuelve coincidencias parciales mayores del 5% con una cadena de entrada de al menos 3 caracteres. Es inmune al uso de mayúsculas, caracteres alfanuéricos y pequeñas variaciones como errores ortográficos y de tipado.
+
+### 1.1. Búsqueda Genérica
+
+Compara la cadena de entrada con el contenido de **todos** los campos `properties` exceptuando `_id` y `geometry`. Devuelve un GeoJSON con las primeras 100 (valor de 'lim' por defecto) coincidencias ordenadas según la similitud.
+
+La respuesta incluye la cadena de entrada en `query` y la similitud por cada dirección en `properties.similarity`.
+
+En el sigueinte ejemplo se busca la dirección más parecida a `Calle 95 #69-61`. Para obetner una sola dirección se ha restringido la cantidad de resultados `lim=1`.
 
 <http://api.addressforall.org/test/search?_q=Calle%2095%20%2369-61&lim=1>
 
@@ -24,7 +33,7 @@
       "coordinates": [-75.57377, 6.290209]
     },
     "properties": {
-      "similarity": 0.28,
+      "similarity": 0.24561405181884766,
       "_id": "57338",
       "address": "CL 95 #69-61",
       "display_name": "Calle 95 #69-61",
@@ -37,6 +46,8 @@
   }
 ]
 ```
+
+En el sigueinte ejemplo se busca `CL 107 42 Popular`. Para obetner solo tres direcciones se ha restringido la cantidad de resultados `lim=3`. Nótese que que en los dos primeros resultados la similitud es exactamente la misma `"similarity": 0.27868854999542236`.
 
 <http://api.addressforall.org/test/search?_q=CL%20107%2042%20Popular&lim=3>
 
@@ -52,7 +63,7 @@
         "coordinates": [-75.548216, 6.296636]
       },
       "properties": {
-        "similarity": 0.3148148,
+        "similarity": 0.27868854999542236,
         "_id": "44088",
         "address": "CL 107E #42C-42",
         "display_name": "Calle 107E #42C-42",
@@ -70,7 +81,7 @@
         "coordinates": [-75.548093, 6.296]
       },
       "properties": {
-        "similarity": 0.3148148,
+        "similarity": 0.27868854999542236,
         "_id": "340868",
         "address": "CL 107C #42B-42",
         "display_name": "Calle 107C #42B-42",
@@ -88,7 +99,7 @@
         "coordinates": [-75.54852, 6.296365]
       },
       "properties": {
-        "similarity": 0.3090909,
+        "similarity": 0.27419352531433105,
         "_id": "185990",
         "address": "CL 107D #42D-07",
         "display_name": "Calle 107D #42D-07",
@@ -103,9 +114,9 @@
 }
 ```
 
-#### 1.1.1. RPC call
+#### 1.1.1. Llamada RPC
 
-<http://api.addressforall.org/test/_sql/rpc/search?_q=CL%20107%2042%20Popular&lim=3>
+La misma consulta también se puede hacer mediante RPC o _Remote Procedure Call_ llamada a procedimiento remoto en Español. Con la ventaja de que la cadena de búsqueda no requiere ir codificada como URL `{"_q":"CL 107C #42B-42 Popular", "lim":3}`
 
 ```batch
 curl -X POST \
@@ -114,7 +125,11 @@ curl -X POST \
   -d '{"_q":"CL 107C #42B-42 Popular", "lim":3}'
 ```
 
-### 1.2. Search in a Bounding-box (Recomended!) :rocket: 
+### 1.2. Búsqueda Delimitada Espacialmente (¡Recomendada!) :rocket:
+
+En este tipo de búsqueda la cadena de entrada se compara con el contenido de los campos `properties` que no pueden ser obtenidos a partir de ralaciones espaciales lo cual incrementa considerablemente el porciento de coincidencia cuando se trata de direcciones referidas en lenguaje natural. Por otro lado, al aplicar una restricción espacial la consulta siempre se realiza en un subconjunto reducido de toos el conjunto de datos impactando considerablemente el desempeño en cuanto al tiempo de respuesta.
+
+#### 1.2.1. Búsqueda en un recuadro delimitado _Bounding-box_
 
 ```batch
 curl -X POST \
@@ -186,7 +201,7 @@ curl -X POST \
 }
 ```
 
-### 1.3. Search Nearby
+#### 1.2.2. Búsqueda en las proximidades de un punto
 
 ```batch
 curl -X POST \

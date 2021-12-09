@@ -630,3 +630,4 @@ SELECT api.reverse(-75.486799, 6.194510, 200, 10);
 -- 
 EXPLAIN ANALYZE
 SELECT api.search('Calle 95 #69-61', 1);
+SELECT api.test_2(r) FROM (SELECT * FROM api.search LIMIT 3)r;

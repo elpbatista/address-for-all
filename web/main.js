@@ -32,6 +32,7 @@ window.onload = () => {
   }
 
   map.addControl(L.control.zoom({ position: "topright" }));
+  // map.addControl(L.control.search());
 
   map.on("locationfound", onLocationFound);
   map.on("locationerror", onLocationError);

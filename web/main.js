@@ -32,7 +32,6 @@ window.onload = () => {
   }
 
   map.addControl(L.control.zoom({ position: "topright" }));
-  // map.addControl(L.control.search());
 
   map.on("locationfound", onLocationFound);
   map.on("locationerror", onLocationError);
@@ -41,4 +40,27 @@ window.onload = () => {
     setView: true,
     maxZoom: 16,
   });
+
+// leaflet-search
+  function searchByAjax(text, callResponse) {
+    //callback for 3rd party ajax requests
+    return $.ajax({
+      url: "http://api.addressforall.org/test/_sql/rpc/search_bounded", //read comments in search.php for more information usage
+      type: "POST",
+      data: { _q: text, viewbox:[-75.552, 6.291, -75.543, 6.297], lim:10},
+      dataType: "json",
+      success: function (json) {
+        callResponse(json);
+      },
+    });
+  }
+
+  map.addControl(
+    new L.Control.Search({
+      sourceData: searchByAjax,
+      text: "Color...",
+      markerLocation: true,
+    })
+  );
+
 };

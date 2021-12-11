@@ -1,66 +1,29 @@
 window.onload = () => {
-  var map = L.map("map", {
-    zoomControl: false,
-  }).fitWorld();
-
-  var tiles = L.tileLayer(
-    "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
-    {
-      maxZoom: 18,
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      id: "mapbox/streets-v11",
-      tileSize: 512,
-      zoomOffset: -1,
-    }
-  ).addTo(map);
-
-  function onLocationFound(e) {
-    var radius = e.accuracy / 2;
-
-    var locationMarker = L.marker(e.latlng)
-      .addTo(map)
-      .bindPopup("You are within " + radius + " meters from this point")
-      .openPopup();
-
-    var locationCircle = L.circle(e.latlng, radius).addTo(map);
-  }
-
-  function onLocationError(e) {
-    alert(e.message);
-  }
-
-  map.addControl(L.control.zoom({ position: "topright" }));
-
-  map.on("locationfound", onLocationFound);
-  map.on("locationerror", onLocationError);
-
-  map.locate({
-    setView: true,
-    maxZoom: 16,
+  const CenterMap = [-75.573553, 6.2443382];
+  const Key =
+    "pk.eyJ1IjoiZWxwYmF0aXN0YSIsImEiOiJja3gyZHl5OXYxbm5yMnFxOTFtZWhqbWlhIn0.bbHJjnHrt_d9iqu4hBZgyw";
+  var map = new ol.Map({
+    target: "map",
+    layers: [
+      // new ol.layer.Tile({
+      //   source: new ol.source.OSM(),
+      // }),
+      new ol.layer.Tile({
+        declutter: true,
+        source: new ol.source.XYZ({
+          attributions:
+            '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+            '© <a href="https://www.openstreetmap.org/copyright">' +
+            "OpenStreetMap contributors</a>",
+          url:
+            "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=" +
+            Key,
+        }),
+      }),
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat(CenterMap),
+      zoom: 14,
+    }),
   });
-
-// leaflet-search
-  function searchByAjax(text, callResponse) {
-    //callback for 3rd party ajax requests
-    return $.ajax({
-      url: "http://api.addressforall.org/test/_sql/rpc/search_bounded", //read comments in search.php for more information usage
-      type: "POST",
-      data: { _q: text, viewbox:[-75.552, 6.291, -75.543, 6.297], lim:10},
-      dataType: "json",
-      success: function (json) {
-        callResponse(json);
-      },
-    });
-  }
-
-  map.addControl(
-    new L.Control.Search({
-      sourceData: searchByAjax,
-      text: "Color...",
-      markerLocation: true,
-    })
-  );
-
 };

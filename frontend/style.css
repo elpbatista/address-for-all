@@ -10,3 +10,14 @@ html, body {
   bottom: 0;
   width: 100%;
 }
+.ol-zoom {
+  display: none;
+}
+.afo-widget {
+  position: absolute;
+  z-index: 5000;
+}
+.search {
+  top: .5em;
+  left: .5em;
+}

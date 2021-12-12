@@ -7,8 +7,8 @@ import XYZ from "ol/source/XYZ";
 import { Attribution, defaults as defaultControls } from "ol/control";
 import { useGeographic } from "ol/proj";
 
-import $ from "jquery";
-window.jQuery = window.$ = $;
+// import $ from "jquery";
+// window.jQuery = window.$ = $;
 // import "jquery-ui";
 // // $(".search").hide();
 // import ui from "jquery-ui";
@@ -41,4 +41,34 @@ const map = new Map({
     center: centerMap,
     zoom: 15,
   }),
+});
+
+$(function () {
+  var availableTags = [
+    "ActionScript",
+    "AppleScript",
+    "Asp",
+    "BASIC",
+    "C",
+    "C++",
+    "Clojure",
+    "COBOL",
+    "ColdFusion",
+    "Erlang",
+    "Fortran",
+    "Groovy",
+    "Haskell",
+    "Java",
+    "JavaScript",
+    "Lisp",
+    "Perl",
+    "PHP",
+    "Python",
+    "Ruby",
+    "Scala",
+    "Scheme",
+  ];
+  $("#afo-search").autocomplete({
+    source: availableTags,
+  });
 });

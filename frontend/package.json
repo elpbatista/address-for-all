@@ -10,8 +10,6 @@
     "vite": "^2.6.7"
   },
   "dependencies": {
-    "jquery": "^3.6.0",
-    "jquery-ui": "^1.13.0",
     "ol": "latest"
   }
 }

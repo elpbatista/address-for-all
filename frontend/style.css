@@ -21,3 +21,8 @@ html, body {
   top: .5em;
   left: .5em;
 }
+.result {
+  background-color: antiquewhite;
+  width: 24em;
+  height: 20em;
+}

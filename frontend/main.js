@@ -44,31 +44,43 @@ const map = new Map({
 });
 
 $(function () {
-  var availableTags = [
-    "ActionScript",
-    "AppleScript",
-    "Asp",
-    "BASIC",
-    "C",
-    "C++",
-    "Clojure",
-    "COBOL",
-    "ColdFusion",
-    "Erlang",
-    "Fortran",
-    "Groovy",
-    "Haskell",
-    "Java",
-    "JavaScript",
-    "Lisp",
-    "Perl",
-    "PHP",
-    "Python",
-    "Ruby",
-    "Scala",
-    "Scheme",
-  ];
+  function log(message) {
+    $("<div>").text(message).prependTo("#log");
+    $("#log").scrollTop(0);
+  }
+
   $("#afo-search").autocomplete({
-    source: availableTags,
+    appendTo: "afo-widget.search",
+    source: function (request, response) {
+      $.ajax({
+        url: "http://api.addressforall.org/test/_sql/rpc/search_bounded",
+        type: "POST",
+        processData: false,
+        contentType: "application/json",
+        cache: true,
+        jsonp: false,
+        data: JSON.stringify({
+          _q: request.term,
+          viewbox: [-75.552, 6.291, -75.543, 6.297],
+          lim: 10,
+        }),
+        dataType: "json",
+        crossDomain: true,
+        success: function (data) {
+          response(
+            data.features.map((feature) => feature.properties.display_name)
+          );
+          alert(
+            JSON.stringify(
+              data.features.map((feature) => feature.properties.display_name)
+            )
+          );
+        },
+      });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+      log("Selected: " + ui.item.value + " aka " + ui.item.id);
+    },
   });
 });

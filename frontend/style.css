@@ -13,7 +13,8 @@ html, body {
 .ol-zoom {
   display: none;
 }
-.afo-widget {
+.afo-widget,
+.ui-widget {
   position: absolute;
   z-index: 5000;
 }

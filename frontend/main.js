@@ -2,9 +2,14 @@ import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
-import XYZ from "ol/source/XYZ";
+// import TileLayer from "ol/layer/Tile";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+// import XYZ from "ol/source/XYZ";
+import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
 import { Attribution, defaults as defaultControls } from "ol/control";
+import { Icon, Style } from "ol/style";
+import GeoJSON from "ol/format/GeoJSON";
+
 // import { useGeographic } from "ol/proj";
 
 // import $ from "jquery";
@@ -14,11 +19,21 @@ import { Attribution, defaults as defaultControls } from "ol/control";
 // import ui from "jquery-ui";
 
 // useGeographic();
+
 const centerMap = [-75.573553, 6.2443382];
 const key =
   "pk.eyJ1IjoiZWxwYmF0aXN0YSIsImEiOiJja3gyZHl5OXYxbm5yMnFxOTFtZWhqbWlhIn0.bbHJjnHrt_d9iqu4hBZgyw";
 const attribution = new Attribution({
   collapsible: false,
+});
+
+const icon = new Style({
+  image: new Icon({
+    anchor: [.5, 31],
+    anchorXUnits: "fraction",
+    anchorYUnits: "pixels",
+    src: "../img/map-marker-2-32.png",
+  }),
 });
 
 const baseMap = new TileLayer({
@@ -70,11 +85,19 @@ $(function () {
           _q: request.term,
           // viewbox: [-75.552, 6.291, -75.543, 6.297],
           viewbox: [extent[0], extent[1], extent[2], extent[3]],
-          lim: 10,
+          // lim: null,
         }),
         dataType: "json",
         crossDomain: true,
         success: function (data) {
+          let addresses = new VectorLayer({
+            map: map,
+            source: new VectorSource({
+              features: new GeoJSON().readFeatures(data),
+            }),
+            style: icon,
+          });
+          // map.render();
           response(
             data.features.map((feature) => feature.properties.display_name)
           );

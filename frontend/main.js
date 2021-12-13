@@ -47,7 +47,7 @@ const map = new Map({
 let extent = [];
 baseMap.on("prerender", function (event) {
   extent = map.getView().calculateExtent(map.getSize());
-  console.log(extent);
+  // console.log(extent);
 });
 
 $(function () {
@@ -56,8 +56,8 @@ $(function () {
     $("#log").scrollTop(0);
   }
 
-  $("#afo-search").autocomplete({
-    appendTo: "afo-widget.search",
+  $("#search").autocomplete({
+    appendTo: "#afo-search",
     source: function (request, response) {
       $.ajax({
         url: "http://api.addressforall.org/test/_sql/rpc/search_bounded",
@@ -78,11 +78,7 @@ $(function () {
           response(
             data.features.map((feature) => feature.properties.display_name)
           );
-          alert(
-            JSON.stringify(
-              data.features.map((feature) => feature.properties.display_name)
-            )
-          );
+          console.log(data.features.map((feature) => feature.properties.display_name));
         },
       });
     },

@@ -2,22 +2,13 @@ import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
-// import TileLayer from "ol/layer/Tile";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
-// import XYZ from "ol/source/XYZ";
 import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
 import { Attribution, defaults as defaultControls } from "ol/control";
 import { Icon, Style } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 
 // import { useGeographic } from "ol/proj";
-
-// import $ from "jquery";
-// window.jQuery = window.$ = $;
-// import "jquery-ui";
-// // $(".search").hide();
-// import ui from "jquery-ui";
-
 // useGeographic();
 
 const centerMap = [-75.573553, 6.2443382];
@@ -87,7 +78,6 @@ $(function () {
         jsonp: false,
         data: JSON.stringify({
           _q: request.term,
-          // viewbox: [-75.552, 6.291, -75.543, 6.297],
           viewbox: [extent[0], extent[1], extent[2], extent[3]],
           // lim: null,
         }),

@@ -93,11 +93,13 @@ $(function () {
           response(
             data.features.map((feature) => feature.properties.display_name)
           );
-          console.log(data.features.map((feature) => feature.properties.display_name));
+          // console.log(data.features.map((feature) => feature.properties.display_name));
+          console.log(data.features.map((feature) => feature.properties.similarity));
         },
       });
     },
     minLength: 3,
+    autoFocus: true,
     select: function (event, ui) {
       log("Selected: " + ui.item.value + " aka " + ui.item.id);
     },

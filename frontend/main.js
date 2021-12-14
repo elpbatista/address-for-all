@@ -48,10 +48,14 @@ const baseMap = new TileLayer({
   }),
 });
 
+const addresses = new VectorLayer({
+  style: icon,
+});
+
 const map = new Map({
   controls: defaultControls({ attribution: false }).extend([attribution]),
   target: "map",
-  layers: [baseMap],
+  layers: [baseMap, addresses],
   view: new View({
     projection: "EPSG:4326",
     center: centerMap,
@@ -90,14 +94,23 @@ $(function () {
         dataType: "json",
         crossDomain: true,
         success: function (data) {
-          let addresses = new VectorLayer({
-            map: map,
-            source: new VectorSource({
-              features: new GeoJSON().readFeatures(data),
-            }),
-            style: icon,
-          });
+          // let addresses = new VectorLayer({
+          //   map: map,
+          //   source: new VectorSource({
+          //     features: new GeoJSON().readFeatures(data),
+          //   }),
+          //   style: icon,
+          // });
           // map.render();
+          // let searchResults = new VectorSource({
+          //   features: new GeoJSON().readFeatures(data),
+          // });
+          addresses.setSource(null);
+          addresses.setSource(
+            new VectorSource({
+              features: new GeoJSON().readFeatures(data),
+            })
+          );
           response(
             data.features.map((feature) => feature.properties.display_name)
           );

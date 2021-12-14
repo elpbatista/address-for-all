@@ -32,18 +32,14 @@ CREATE OR REPLACE FUNCTION api.search(_q text, lim integer DEFAULT 100) RETURNS 
 		ORDER BY diff
 		LIMIT lim
 	)
-SELECT CASE
-		j.features_count
-		WHEN 1 THEN j.features
-		ELSE json_build_object(
-			'type',
-			'FeatureCollection',
-			'query',
-			_q,
-			'features',
-			j.features
-		)
-	END AS response
+SELECT json_build_object(
+		'type',
+		'FeatureCollection',
+		'query',
+		_q,
+		'features',
+		j.features
+	) AS response
 FROM (
 		SELECT count(r) AS features_count,
 			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
@@ -61,7 +57,10 @@ FROM (
 				FROM (
 						SELECT *
 						FROM q
-						WHERE q.diff <.95
+						WHERE q.diff < (
+								SELECT MIN(diff) + MIN(diff) / 10
+								FROM q
+							)
 					) s
 			) r
 	) j;
@@ -87,12 +86,7 @@ CREATE OR REPLACE FUNCTION api.search_bounded(
 				FROM api.search
 				WHERE ST_Contains(
 						ST_SetSRID(
-							api.viewbox_to_polygon(
-								viewbox [1],
-								viewbox [2],
-								viewbox [3],
-								viewbox [4]
-							),
+							api.viewbox_to_polygon(viewbox [1], viewbox [2], viewbox [3], viewbox [4]),
 							4326
 						),
 						geom
@@ -101,18 +95,14 @@ CREATE OR REPLACE FUNCTION api.search_bounded(
 		ORDER BY diff
 		LIMIT lim
 	)
-SELECT CASE
-		j.features_count
-		WHEN 1 THEN j.features
-		ELSE json_build_object(
-			'type',
-			'FeatureCollection',
-			'query',
-			_q,
-			'features',
-			j.features
-		)
-	END AS response
+SELECT json_build_object(
+		'type',
+		'FeatureCollection',
+		'query',
+		_q,
+		'features',
+		j.features
+	) AS response
 FROM (
 		SELECT count(r) AS features_count,
 			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
@@ -130,7 +120,10 @@ FROM (
 				FROM (
 						SELECT *
 						FROM q
-						WHERE q.diff <.95
+						WHERE q.diff < (
+								SELECT MIN(diff) + MIN(diff) / 10
+								FROM q
+							)
 					) s
 			) r
 	) j $BODY$;
@@ -164,18 +157,14 @@ CREATE OR REPLACE FUNCTION api.search_nearby(
 			dist
 		LIMIT lim
 	)
-SELECT CASE
-		j.features_count
-		WHEN 1 THEN j.features
-		ELSE json_build_object(
-			'type',
-			'FeatureCollection',
-			'query',
-			_q,
-			'features',
-			j.features
-		)
-	END AS response
+SELECT json_build_object(
+		'type',
+		'FeatureCollection',
+		'query',
+		_q,
+		'features',
+		j.features
+	) AS response
 FROM (
 		SELECT count(r) AS features_count,
 			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
@@ -194,7 +183,10 @@ FROM (
 				FROM (
 						SELECT *
 						FROM q
-						WHERE q.diff <.95
+						WHERE q.diff < (
+								SELECT MIN(diff) + MIN(diff) / 10
+								FROM q
+							)
 					) s
 			) r
 	) j $BODY$;

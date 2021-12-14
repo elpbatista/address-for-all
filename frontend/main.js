@@ -94,18 +94,7 @@ $(function () {
         dataType: "json",
         crossDomain: true,
         success: function (data) {
-          // let addresses = new VectorLayer({
-          //   map: map,
-          //   source: new VectorSource({
-          //     features: new GeoJSON().readFeatures(data),
-          //   }),
-          //   style: icon,
-          // });
-          // map.render();
-          // let searchResults = new VectorSource({
-          //   features: new GeoJSON().readFeatures(data),
-          // });
-          addresses.setSource(null);
+          // addresses.setSource(null);
           addresses.setSource(
             new VectorSource({
               features: new GeoJSON().readFeatures(data),

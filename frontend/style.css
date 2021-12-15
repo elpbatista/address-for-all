@@ -13,15 +13,34 @@ html, body {
 .ol-zoom {
   display: none;
 }
-.afo-widget,
-.ui-widget {
+
+.search {
+  background-color: rgba(255, 255, 255, .75);
   position: absolute;
   z-index: 5000;
+  padding: 0 .5em;
+  top: 0;
+  left: 0;
+  width: 18em;
+  max-height: 100%;
+  white-space: nowrap;
+  overflow: scroll;
+  display: block;
 }
-.search {
-  top: .5em;
-  left: .5em;
+
+.search form {
+  margin: .5em 0;
+  background-color: rgba(255, 255, 255, .75);
+  width: 100%;
+  /* position: fixed; */
 }
+
+.ui-menu {
+  list-style: none;
+  padding: .5em 0;
+  margin: .5em 0;
+}
+
 .result {
   background-color: antiquewhite;
   width: 24em;

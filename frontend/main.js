@@ -4,7 +4,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
-import { Attribution, defaults as defaultControls } from "ol/control";
+import { Attribution, ScaleLine, defaults as defaultControls } from "ol/control";
 import { Icon, Style } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 
@@ -25,6 +25,14 @@ const icon = new Style({
     anchorYUnits: "pixels",
     src: "../img/map-marker-2-32.png",
   }),
+});
+
+const scaleBar = new ScaleLine({
+  units: 'metric',
+  bar: true,
+  steps: 4,
+  text: true,
+  minWidth: 140,
 });
 
 const baseMap = new TileLayer({
@@ -53,6 +61,8 @@ const map = new Map({
     zoom: 15,
   }),
 });
+
+map.addControl(scaleBar);
 
 let extent = [];
 baseMap.on("prerender", function (event) {

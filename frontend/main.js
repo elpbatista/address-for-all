@@ -89,7 +89,7 @@ $(function () {
         dataType: "json",
         crossDomain: true,
         success: function (data) {
-          // addresses.setSource(null);
+          addresses.setSource(null);
           addresses.setSource(
             new VectorSource({
               features: new GeoJSON().readFeatures(data),
@@ -110,84 +110,3 @@ $(function () {
     },
   });
 });
-
-
-// // ___________________
-// var aCountries = [],
-//   cache = {};
-// $("#autocomplete")
-//   .autocomplete({
-//     // serviceUrl: '/autosuggest/service/url',
-//     delay: 500,
-//     minLength: 3,
-//     create: function (event, ui) {
-//       $.ajax({
-//         url: "https://codepen.io/blackjacques/pen/gvJVYo.html",
-//         dataType: "text",
-//         success: function (data) {
-//           //debugger;
-//           aCountries = data
-//             .split("\n")
-//             .map(function (currentValue, index, arr) {
-//               var labelValuePair = currentValue.split(":");
-//               return {
-//                 label: labelValuePair[1],
-//                 value: labelValuePair[0],
-//               };
-//             });
-//           console.log("countries");
-//         },
-//       });
-//     },
-//     source: function (request, response) {
-//       var term = request.term.toLowerCase();
-//       if (!(term in cache)) {
-//         console.log("Storing in cache...");
-//         var matcher = new RegExp(
-//           "\\b" + $.ui.autocomplete.escapeRegex(term),
-//           "i"
-//         );
-//         cache[term] = aCountries.filter(function (country) {
-//           return matcher.test(country.label);
-//         });
-//         console.log(cache[term]);
-//       }
-//       response(cache[term]);
-//     },
-//     select: function (event, ui) {
-//       event.preventDefault();
-//       $(event.target).val(ui.item.label);
-//       $("#selection-ajax").html(
-//         "You selected: " + ui.item.value + ", " + ui.item.label
-//       );
-//     },
-//     focus: function (event, ui) {
-//       event.preventDefault();
-//       $(event.target).val(ui.item.label);
-//     },
-//   })
-//   .on("keyup", function (event) {
-//     if ($(event.target).val().length == 0) $("#selection-ajax").html("");
-//   })
-//   .data("ui-autocomplete")._renderItem = function (ul, item) {
-//   //thanks to Salman Arshad
-//   //http://salman-w.blogspot.ca/2013/12/jquery-ui-autocomplete-examples.html#example-4
-//   var $div = $("<div></div>").text(item.label),
-//     searchText = $.trim(this.term).toLowerCase(),
-//     currentNode = $div.get(0).firstChild,
-//     matchIndex,
-//     newTextNode,
-//     newSpanNode;
-//   while (
-//     (matchIndex = currentNode.data.toLowerCase().indexOf(searchText)) >= 0
-//   ) {
-//     newTextNode = currentNode.splitText(matchIndex);
-//     currentNode = newTextNode.splitText(searchText.length);
-//     newSpanNode = document.createElement("span");
-//     newSpanNode.className = "highlight";
-//     currentNode.parentNode.insertBefore(newSpanNode, currentNode);
-//     newSpanNode.appendChild(newTextNode);
-//   }
-
-//   return $("<li></li>").append($div).appendTo(ul);
-// };

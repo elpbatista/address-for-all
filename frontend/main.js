@@ -19,7 +19,6 @@ import $ from "jquery";
 // import "jquery-highlight";
 window.jQuery = window.$ = $;
 
-
 const centerMap = [-75.573553, 6.2443382];
 const key =
   "pk.eyJ1IjoiZWxwYmF0aXN0YSIsImEiOiJja3gyZHl5OXYxbm5yMnFxOTFtZWhqbWlhIn0.bbHJjnHrt_d9iqu4hBZgyw";
@@ -125,6 +124,7 @@ const searchBounded = (term, boundingBox) => {
       // populate the list
       $("#afo-results").children("ul").append(result);
       // $("#afo-results").focus();
+			// $("#results").highlight("calle");
       //  response(
       //    data.features.map((feature) => feature.properties.display_name)
       //  );

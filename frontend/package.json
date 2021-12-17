@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "jquery": "^3.6.0",
-    "jquery-highlight": "^3.5.0",
-    "ol": "latest"
+    "ol": "^6.9.0"
   }
 }

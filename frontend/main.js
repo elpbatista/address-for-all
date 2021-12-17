@@ -4,11 +4,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
-import {
-  Attribution,
-  ScaleLine,
-  defaults as defaultControls,
-} from "ol/control";
+import {Attribution, defaults as defaultControls }from "ol/control";
 import { Icon, Style } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 
@@ -16,7 +12,6 @@ import GeoJSON from "ol/format/GeoJSON";
 // useGeographic();
 
 import $ from "jquery";
-// import "jquery-highlight";
 window.jQuery = window.$ = $;
 
 const centerMap = [-75.573553, 6.2443382];
@@ -35,13 +30,13 @@ const icon = new Style({
   }),
 });
 
-const scaleBar = new ScaleLine({
-  units: "metric",
-  bar: true,
-  steps: 4,
-  text: true,
-  minWidth: 140,
-});
+// const scaleBar = new ScaleLine({
+//   units: "metric",
+//   bar: true,
+//   steps: 4,
+//   text: true,
+//   minWidth: 140,
+// });
 
 const baseMap = new TileLayer({
   source: new XYZ({
@@ -103,7 +98,7 @@ const searchBounded = (term, boundingBox) => {
           '<div class="fw-bold">' +
           feature.properties.address +
           "</div>" +
-          '<div class="dispaly-name fw-lighter">' +
+          '<div class="fw-lighter">' +
           feature.properties.display_name +
           " " +
           feature.properties.barrio +
@@ -124,7 +119,6 @@ const searchBounded = (term, boundingBox) => {
       // populate the list
       $("#afo-results").children("ul").append(result);
       // $("#afo-results").focus();
-			// $("#results").highlight("calle");
       //  response(
       //    data.features.map((feature) => feature.properties.display_name)
       //  );

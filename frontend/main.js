@@ -4,12 +4,19 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
-import { Attribution, ScaleLine, defaults as defaultControls } from "ol/control";
+import {
+  Attribution,
+  ScaleLine,
+  defaults as defaultControls,
+} from "ol/control";
 import { Icon, Style } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 
 // import { useGeographic } from "ol/proj";
 // useGeographic();
+
+import $ from "jquery";
+window.jQuery = window.$ = $;
 
 const centerMap = [-75.573553, 6.2443382];
 const key =
@@ -20,7 +27,7 @@ const attribution = new Attribution({
 
 const icon = new Style({
   image: new Icon({
-    anchor: [.5, 31],
+    anchor: [0.5, 31],
     anchorXUnits: "fraction",
     anchorYUnits: "pixels",
     src: "../img/map-marker-2-32.png",
@@ -28,7 +35,7 @@ const icon = new Style({
 });
 
 const scaleBar = new ScaleLine({
-  units: 'metric',
+  units: "metric",
   bar: true,
   steps: 4,
   text: true,
@@ -64,59 +71,73 @@ const map = new Map({
 
 map.addControl(scaleBar);
 
-let extent = [];
-baseMap.on("prerender", function (event) {
-  extent = map.getView().calculateExtent(map.getSize());
-  // console.log(extent);
-});
-
-$(function () {
-  function log(message) {
-    $("<div>").text(message).prependTo("#log");
-    $("#log").scrollTop(0);
-  }
-
-  $("#search").autocomplete({
-    appendTo: "#afo-search",
-    minLength: 3,
-    autoFocus: true,
-		// search: function (event, ui) {
-		// 	alert($("#search").val());
-		// },
-    source: function (request, response) {
-      $.ajax({
-        url: "http://api.addressforall.org/test/_sql/rpc/search_bounded",
-        type: "POST",
-        processData: false,
-        contentType: "application/json",
-        cache: true,
-        jsonp: false,
-        data: JSON.stringify({
-          _q: request.term,
-          viewbox: [extent[0], extent[1], extent[2], extent[3]],
-          // lim: null,
-        }),
-        dataType: "json",
-        crossDomain: true,
-        success: function (data) {
-          addresses.setSource(null);
-          addresses.setSource(
-            new VectorSource({
-              features: new GeoJSON().readFeatures(data),
-            })
-          );
-          response(
-            data.features.map((feature) => feature.properties.display_name)
-          );
-          // console.log(data.features.map((feature) => feature.properties.display_name));
-          console.log(
-            data.features.map((feature) => feature.properties.similarity)
-          );
-        },
-      });
-    },
-    select: function (event, ui) {
-      log("Selected: " + ui.item.value + " aka " + ui.item.id);
+const searchBounded = (term, boundingBox) => {
+  $.ajax({
+    url: "http://api.addressforall.org/test/_sql/rpc/search_bounded",
+    type: "POST",
+    processData: false,
+    contentType: "application/json",
+    cache: true,
+    jsonp: false,
+    data: JSON.stringify({
+      _q: term,
+      viewbox: boundingBox,
+      // lim: null,
+    }),
+    dataType: "json",
+    crossDomain: true,
+    success: function (data) {
+      // clear map
+      addresses.setSource(null);
+      // plot search results
+      addresses.setSource(
+        new VectorSource({
+          features: new GeoJSON().readFeatures(data),
+        })
+      );
+      let result =
+        "<li>lorem</li><li>ipsum</li><li>bla</li><li>bla</li><li>bla</li>";
+      // show results
+      $("#afo-results").show();
+      // clear the list
+      $("#afo-results").children("ul").empty();
+      // populate the list
+      $("#afo-results").children("ul").append(result);
+      // $("#afo-results").focus();
+      //  response(
+      //    data.features.map((feature) => feature.properties.display_name)
+      //  );
+      // console.log(data.features.map((feature) => feature.properties.display_name));
+      console.log(
+        data.features.map((feature) => feature.properties.similarity)
+      );
     },
   });
+};
+
+const search = (e) => {
+  let searchBox = $(e.target);
+  e.stopPropagation();
+  clearTimeout(searchBox.data("timeout"));
+  searchBox.data(
+    "timeout",
+    setTimeout(function () {
+      let term = searchBox.val();
+      if (term.length >= 3) {
+        searchBounded(term, map.getView().calculateExtent(map.getSize()));
+      }
+      // $.post("buildLists.php", { _t: txt, _lnk: 1 }, function (result) {
+      //   $("#finder").show();
+      //   $("#finder").children("ul").empty();
+      //   $("#finder").children("ul").append(result);
+      //   $("#finder").focus();
+      //   //valFinder();
+      //   //alert(result);
+      // });
+    }, 200)
+  );
+};
+
+$("#search").on("keyup", function (e) {
+  search(e);
 });

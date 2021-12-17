@@ -21,41 +21,10 @@ body {
   background-color: rgba(255, 255, 255, .75);
   position: absolute;
   z-index: 5000;
-  padding: 0;
   top: 0;
   left: 0;
-  height: 100%;
-  /* width: fit-content; */
-  white-space: nowrap;
-  overflow: scroll;
-  display: block;
 }
 
-.search form {
-  padding: .5em .5em .7em .5em;
-  background-color: rgba(255, 255, 255, .85);
-  box-shadow: 1px 1px 3px 0px rgba(115, 115, 115, 0.65);
-  -webkit-box-shadow: 1px 1px 3px 0px rgba(115, 115, 115, 0.65);
-  -moz-box-shadow: 1px 1px 3px 0px rgba(115, 115, 115, 0.65);
-  position: fixed;
-  width: 15.5%;
-  z-index: 5001;
-}
-
-.ui-menu {
-  list-style: none;
-  padding: .5em 0;
-  margin: .5em 0;
-}
-
-.ui-menu-item {
-  padding: .5em;
-  color: dimgray;
-  font-weight: 300;
-}
-
-.result {
-  background-color: antiquewhite;
-  width: 24em;
-  height: 20em;
+#afo-results {
+	display: none;
 }

@@ -16,7 +16,9 @@ import GeoJSON from "ol/format/GeoJSON";
 // useGeographic();
 
 import $ from "jquery";
+// import "jquery-highlight";
 window.jQuery = window.$ = $;
+
 
 const centerMap = [-75.573553, 6.2443382];
 const key =
@@ -69,7 +71,7 @@ const map = new Map({
   }),
 });
 
-map.addControl(scaleBar);
+// map.addControl(scaleBar);
 
 const searchBounded = (term, boundingBox) => {
   $.ajax({
@@ -95,8 +97,27 @@ const searchBounded = (term, boundingBox) => {
           features: new GeoJSON().readFeatures(data),
         })
       );
-      let result =
-        "<li>lorem</li><li>ipsum</li><li>bla</li><li>bla</li><li>bla</li>";
+      let result = data.features.map(
+        (feature) =>
+          '<li class="list-group-item d-flex justify-content-between align-items-start">' +
+          '<div class="ms-2 me-auto">' +
+          '<div class="fw-bold">' +
+          feature.properties.address +
+          "</div>" +
+          '<div class="dispaly-name fw-lighter">' +
+          feature.properties.display_name +
+          " " +
+          feature.properties.barrio +
+          // " " +
+          // feature.properties.comuna +
+          "</div>" +
+          "</div>" +
+          '<span class="badge bg-info bg-opacity-85 rounded-pill">' +
+          Math.round(feature.properties.similarity * 100) +
+          "%" +
+          "</span>" +
+          "</li>"
+      );
       // show results
       $("#afo-results").show();
       // clear the list
@@ -108,9 +129,9 @@ const searchBounded = (term, boundingBox) => {
       //    data.features.map((feature) => feature.properties.display_name)
       //  );
       // console.log(data.features.map((feature) => feature.properties.display_name));
-      console.log(
-        data.features.map((feature) => feature.properties.similarity)
-      );
+      // console.log(
+      //   data.features.map((feature) => feature.properties.similarity)
+      // );
     },
   });
 };
@@ -126,14 +147,6 @@ const search = (e) => {
       if (term.length >= 3) {
         searchBounded(term, map.getView().calculateExtent(map.getSize()));
       }
-      // $.post("buildLists.php", { _t: txt, _lnk: 1 }, function (result) {
-      //   $("#finder").show();
-      //   $("#finder").children("ul").empty();
-      //   $("#finder").children("ul").append(result);
-      //   $("#finder").focus();
-      //   //valFinder();
-      //   //alert(result);
-      // });
     }, 200)
   );
 };

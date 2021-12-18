@@ -11,8 +11,8 @@ import GeoJSON from "ol/format/GeoJSON";
 // import { useGeographic } from "ol/proj";
 // useGeographic();
 
-import $ from "jquery";
-window.jQuery = window.$ = $;
+// import $ from "jquery";
+// window.jQuery = window.$ = $;
 
 const centerMap = [-75.573553, 6.2443382];
 const key =
@@ -119,6 +119,7 @@ const searchBounded = (term, boundingBox) => {
       // populate the list
       $("#afo-results").children("ul").append(result);
       // $("#afo-results").focus();
+			$("#afo-results").mark(term);
       //  response(
       //    data.features.map((feature) => feature.properties.display_name)
       //  );

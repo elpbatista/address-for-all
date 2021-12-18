@@ -98,7 +98,7 @@ const searchBounded = (term, boundingBox) => {
           '<div class="fw-bold">' +
           feature.properties.address +
           "</div>" +
-          '<div class="fw-lighter">' +
+          '<div class="address fw-lighter">' +
           feature.properties.display_name +
           " " +
           feature.properties.barrio +
@@ -119,7 +119,7 @@ const searchBounded = (term, boundingBox) => {
       // populate the list
       $("#afo-results").children("ul").append(result);
       // $("#afo-results").focus();
-			$("#afo-results").mark(term);
+			$(".address").mark(term.split(" "));
       //  response(
       //    data.features.map((feature) => feature.properties.display_name)
       //  );

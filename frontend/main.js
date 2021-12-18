@@ -4,7 +4,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ as XYZ, Vector as VectorSource } from "ol/source";
-import {Attribution, defaults as defaultControls }from "ol/control";
+import { Attribution, defaults as defaultControls } from "ol/control";
 import { Icon, Style } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 
@@ -78,55 +78,57 @@ const searchBounded = (term, boundingBox) => {
     data: JSON.stringify({
       _q: term,
       viewbox: boundingBox,
-      lim: 10000,
+      // lim: 100,
     }),
     dataType: "json",
     crossDomain: true,
     success: function (data) {
-      // clear map
-      addresses.setSource(null);
-      // plot search results
-      addresses.setSource(
-        new VectorSource({
-          features: new GeoJSON().readFeatures(data),
-        })
-      );
-      let result = data.features.map(
-        (feature) =>
-          '<li class="list-group-item d-flex justify-content-between align-items-start">' +
-          '<div class="ms-2 me-auto">' +
-          '<div class="fw-bold">' +
-          feature.properties.address +
-          "</div>" +
-          '<div class="address fw-lighter">' +
-          feature.properties.display_name +
-          " " +
-          feature.properties.barrio +
-          // " " +
-          // feature.properties.comuna +
-          "</div>" +
-          "</div>" +
-          '<span class="badge bg-info bg-opacity-85 rounded-pill">' +
-          Math.round(feature.properties.similarity * 100) +
-          "%" +
-          "</span>" +
-          "</li>"
-      );
-      // show results
-      $("#afo-results").show();
-      // clear the list
-      $("#afo-results").children("ul").empty();
-      // populate the list
-      $("#afo-results").children("ul").append(result);
-      // $("#afo-results").focus();
-			$(".address").mark(term.split(" "));
-      //  response(
-      //    data.features.map((feature) => feature.properties.display_name)
-      //  );
-      // console.log(data.features.map((feature) => feature.properties.display_name));
-      // console.log(
-      //   data.features.map((feature) => feature.properties.similarity)
-      // );
+      if (data.features) {
+        // clear map
+        addresses.setSource(null);
+        // plot search results
+        addresses.setSource(
+          new VectorSource({
+            features: new GeoJSON().readFeatures(data),
+          })
+        );
+        let result = data.features.map(
+          (feature) =>
+            '<li class="list-group-item d-flex justify-content-between align-items-start">' +
+            '<div class="ms-2 me-auto">' +
+            '<div class="fw-bold">' +
+            feature.properties.address +
+            "</div>" +
+            '<div class="address fw-lighter">' +
+            feature.properties.display_name +
+            " " +
+            feature.properties.barrio +
+            // " " +
+            // feature.properties.comuna +
+            "</div>" +
+            "</div>" +
+            '<span class="badge bg-info bg-opacity-85 rounded-pill">' +
+            Math.round(feature.properties.similarity * 100) +
+            "%" +
+            "</span>" +
+            "</li>"
+        );
+        // show results
+        $("#afo-results").show();
+        // clear the list
+        $("#afo-results").children("ul").empty();
+        // populate the list
+        $("#afo-results").children("ul").append(result);
+        // $("#afo-results").focus();
+        $(".address").mark(term.split(" "));
+        //  response(
+        //    data.features.map((feature) => feature.properties.display_name)
+        //  );
+        // console.log(data.features.map((feature) => feature.properties.display_name));
+        // console.log(
+        //   data.features.map((feature) => feature.properties.similarity)
+        // );
+      }
     },
   });
 };

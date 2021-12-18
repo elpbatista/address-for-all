@@ -59,7 +59,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 5
+								SELECT MIN(diff) + MIN(diff) / 10 AND q.diff <.85
 								FROM q
 							)
 					) s
@@ -125,7 +125,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 5
+								SELECT MIN(diff) + MIN(diff) / 10 AND q.diff <.85
 								FROM q
 							)
 					) s
@@ -191,7 +191,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 5
+								SELECT MIN(diff) + MIN(diff) / 10 AND q.diff <.85
 								FROM q
 							)
 					) s

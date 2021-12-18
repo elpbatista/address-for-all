@@ -27,7 +27,9 @@ GRANT EXECUTE ON FUNCTION api.viewbox_to_polygon(numeric, numeric, numeric, nume
 -- DROP FUNCTION IF EXISTS api.search(text, integer);
 CREATE OR REPLACE FUNCTION api.search(_q text, lim integer DEFAULT 100) RETURNS json LANGUAGE 'sql' COST 100 IMMUTABLE PARALLEL UNSAFE AS $BODY$ WITH q AS (
 		SELECT *,
-			lower(_q) <->q AS diff
+			(
+				(lower(_q) <->q) + (lower(_q) <->(properties->>'address')::text) + (lower(_q) <->(properties->>'display_name')::text)
+			) / 3 AS diff
 		FROM api.search
 		ORDER BY diff
 		LIMIT lim
@@ -41,8 +43,7 @@ SELECT json_build_object(
 		j.features
 	) AS response
 FROM (
-		SELECT count(r) AS features_count,
-			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+		SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
 		FROM (
 				SELECT s.geom,
 					1 - s.diff AS similarity,
@@ -58,7 +59,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 20
+								SELECT MIN(diff) + MIN(diff) / 5
 								FROM q
 							)
 					) s
@@ -80,7 +81,11 @@ CREATE OR REPLACE FUNCTION api.search_bounded(
 		lim integer DEFAULT 100
 	) RETURNS json LANGUAGE 'sql' COST 100 IMMUTABLE PARALLEL UNSAFE AS $BODY$ WITH q AS (
 		SELECT *,
-			lower(_q) <->q.spq AS diff
+			(
+				(lower(_q) <->spq) + (lower(_q) <->(properties->>'address')::text) + (
+					lower(_q) <->(properties->>'display_name')::text
+				)
+			) / 3 AS diff
 		FROM (
 				SELECT *
 				FROM api.search
@@ -104,8 +109,7 @@ SELECT json_build_object(
 		j.features
 	) AS response
 FROM (
-		SELECT count(r) AS features_count,
-			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+		SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
 		FROM (
 				SELECT s.geom,
 					1 - s.diff AS similarity,
@@ -121,7 +125,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 20
+								SELECT MIN(diff) + MIN(diff) / 5
 								FROM q
 							)
 					) s
@@ -143,7 +147,11 @@ CREATE OR REPLACE FUNCTION api.search_nearby(
 		lim integer DEFAULT 100
 	) RETURNS json LANGUAGE 'sql' COST 100 IMMUTABLE PARALLEL UNSAFE AS $BODY$ WITH q AS (
 		SELECT *,
-			lower(_q) <->q.spq AS diff
+			(
+				(lower(_q) <->spq) + (lower(_q) <->(properties->>'address')::text) + (
+					lower(_q) <->(properties->>'display_name')::text
+				)
+			) / 3 AS diff
 		FROM (
 				SELECT *
 				FROM (
@@ -166,8 +174,7 @@ SELECT json_build_object(
 		j.features
 	) AS response
 FROM (
-		SELECT count(r) AS features_count,
-			json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+		SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
 		FROM (
 				SELECT s.geom,
 					1 - s.diff AS similarity,
@@ -184,7 +191,7 @@ FROM (
 						SELECT *
 						FROM q
 						WHERE q.diff < (
-								SELECT MIN(diff) + MIN(diff) / 20
+								SELECT MIN(diff) + MIN(diff) / 5
 								FROM q
 							)
 					) s

@@ -146,6 +146,7 @@ CREATE INDEX search_geom_sp_idx ON api.search USING SPGIST (geom);
 CREATE INDEX search_geom_idx ON api.search USING GIST (geom);
 CREATE INDEX search_properties_idx ON api.search USING GIN (properties jsonb_ops);
 CREATE INDEX search_properties_address_idx ON api.search USING GIN ((properties->'address'));
+CREATE INDEX search_properties_display_name_idx ON api.search USING GIN ((properties->'display_name'));
 CREATE INDEX search_properties_id_idx ON api.search USING GIN ((properties->'_id'));
 CREATE INDEX search_q_trgm_idx ON api.search USING GIN (q gin_trgm_ops);
 -- CREATE INDEX search_spq_trgm_idx ON api.search USING GIN (spq gin_trgm_ops);
@@ -452,6 +453,55 @@ FROM (
             SELECT *
             FROM q
             WHERE q.diff < (SELECT MIN(diff) + MIN(diff)/10 FROM q)
+          ) s
+      ) r
+  ) j;
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Full Text Search Bounded V4.2
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WITH q AS (
+  SELECT *,
+    ((lower('Calle 107C #42B Popular') <->spq) +
+	(lower('Calle 107C #42B Popular') <->(properties->>'address')::text) +
+	(lower('Calle 107C #42B Popular') <->(properties->>'display_name')::text))/3 AS diff
+  FROM (
+      SELECT *
+      FROM api.search
+      WHERE ST_Contains(
+          ST_SetSRID(
+            api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297),
+            4326
+          ),
+          geom
+        )
+    ) q
+  ORDER BY diff
+  LIMIT 10
+)
+SELECT json_build_object(
+      'type',
+      'FeatureCollection',
+      'features',
+      j.features
+    )
+ AS response
+FROM (
+    SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
+    FROM (
+        SELECT s.geom,
+          1 - s.diff AS similarity,
+          s.properties->>'_id' AS _id,
+          s.properties->>'address' AS address,
+          s.properties->>'display_name' AS display_name,
+          s.properties->>'barrio' AS barrio,
+          s.properties->>'comuna' AS comuna,
+          s.properties->>'municipality' AS municipality,
+          s.properties->>'divipola' AS divipola,
+          s.properties->>'country' AS country
+        FROM (
+            SELECT *
+            FROM q
+            WHERE q.diff < (SELECT MIN(diff) + MIN(diff)/5 FROM q)
           ) s
       ) r
   ) j;

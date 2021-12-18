@@ -78,7 +78,7 @@ const searchBounded = (term, boundingBox) => {
     data: JSON.stringify({
       _q: term,
       viewbox: boundingBox,
-      // lim: null,
+      lim: 10000,
     }),
     dataType: "json",
     crossDomain: true,

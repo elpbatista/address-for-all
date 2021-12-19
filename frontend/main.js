@@ -28,6 +28,14 @@ const icon = new Style({
     anchorYUnits: "pixels",
     src: "../img/map-marker-2-32.png",
   }),
+  // text: new Text({
+  //   text: getText,
+  //   font: "11px",
+  //   fill: new Fill({ color: "rgba(52, 102, 180, 1)" }),
+  //   stroke: new Stroke({ color: "rgba(46, 44, 42, 0.5)", width: .5 }),
+  //   textAlign: "center",
+  //   offsetY: -20,
+  // }),
 });
 
 // const scaleBar = new ScaleLine({
@@ -61,7 +69,7 @@ const map = new Map({
   view: new View({
     projection: "EPSG:4326",
     center: centerMap,
-    zoom: 15,
+    zoom: 17,
   }),
 });
 
@@ -78,7 +86,7 @@ const searchBounded = (term, boundingBox) => {
     data: JSON.stringify({
       _q: term,
       viewbox: boundingBox,
-      // lim: 100,
+      // lim: 1000,
     }),
     dataType: "json",
     crossDomain: true,
@@ -91,15 +99,15 @@ const searchBounded = (term, boundingBox) => {
           new VectorSource({
             features: new GeoJSON().readFeatures(data),
           })
-        );
+				);
         let result = data.features.map(
           (feature) =>
-            '<li class="list-group-item d-flex justify-content-between align-items-start">' +
+            '<li id="'+ feature.properties._id+'" class="list-group-item d-flex justify-content-between align-items-start">' +
             '<div class="ms-2 me-auto">' +
-            '<div class="fw-bold">' +
+            '<div class="address fw-bold" data-coordinates="'+ JSON.stringify(feature.geometry.coordinates) +'">' +
             feature.properties.address +
             "</div>" +
-            '<div class="address fw-lighter">' +
+            '<div class="display_name fw-lighter">' +
             feature.properties.display_name +
             " " +
             feature.properties.barrio +
@@ -120,7 +128,7 @@ const searchBounded = (term, boundingBox) => {
         // populate the list
         $("#afo-results").children("ul").append(result);
         // $("#afo-results").focus();
-        $(".address").mark(term.split(" "));
+        $(".display_name").mark(term.split(" "));
         //  response(
         //    data.features.map((feature) => feature.properties.display_name)
         //  );

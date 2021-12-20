@@ -1,4 +1,9 @@
-import API, { mapCenter, olKey as key, markerBlue, markerOrange } from "./addressforall.js";
+import API, {
+  mapCenter,
+  olKey as key,
+  markerBlue,
+  markerOrange,
+} from "./addressforall.js";
 import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
@@ -14,6 +19,7 @@ import GeoJSON from "ol/format/GeoJSON";
 
 import $ from "jquery";
 import mark from "mark.js/dist/jquery.mark.js";
+import { clearAllProjections } from "ol/proj";
 window.jQuery = window.$ = $;
 
 const attribution = new Attribution({
@@ -111,14 +117,9 @@ const searchBounded = (term, boundingBox) => {
         // clear map
         addresses.setSource(null);
         // plot search results
-        // let newfeatures = new GeoJSON().readFeatures(data);
-				// // console.log(newfeatures);
-				// newfeatures = newfeatures.map((feature) => feature.setId(6287342340))
-				// console.log(newfeatures);
         addresses.setSource(
           new VectorSource({
             features: new GeoJSON().readFeatures(data),
-            // features: newfeatures,
           })
         );
         let result = data.features.map(
@@ -147,28 +148,18 @@ const searchBounded = (term, boundingBox) => {
             "</li>"
         );
         // show results
-				$("#afo-results").show();
-				$("#clear-btn").show();
-				// $("#search").delay(600).trigger("blur"); 
-        // clear the list
-        $("#afo-results").children("ul").empty();
+        $("#search").removeClass("is-invalid");
+        $("#afo-results").show();
+        $("#clear-btn").show();
+        $("#afo-results").children("ul").empty().show();
         // populate the list
         $("#afo-results").children("ul").append(result);
-        // $("#afo-results").focus();
+        // highlight matching words
         $(".display_name").mark(term.split(" "));
-        //  response(
-        //    data.features.map((feature) => feature.properties.display_name)
-        //  );
-        // console.log(data.features.map((feature) => feature.properties.display_name));
-        // console.log(
-        //   data.features.map((feature) => feature.properties.similarity)
-        // );
-			}
-			else {
-				alert(
-          `Oiga compay, cámbieme esa búsqueda que preguntando por "${term}" aquí abajito no encuentro na`
-        );
-			}
+      } else {
+        $("#search").addClass("is-invalid");
+        clearResults();
+      }
     },
   });
 };
@@ -198,66 +189,30 @@ $(document).on("keydown", "form", function (event) {
 
 $(document).on("click", "#clear-btn", function (e) {
   e.stopPropagation();
-	e.stopImmediatePropagation();
-	addresses.setSource(null);
-	$("#afo-results").children("ul").empty().hide();
-	$("#search").val("");
-	return false;
+  e.stopImmediatePropagation();
+  clearResults();
+  $("#search").val("");
+  map.getView().setZoom(15);
+  $(e.currentTarget).hide();
+  return false;
 });
 
 $(document).on("click", ".feature", function (e) {
-  // alert(JSON.stringify(addresses.features))
   e.stopPropagation();
   e.stopImmediatePropagation();
-	let index = $(e.currentTarget).index();
-	let selectedFeature = addresses
+	let currentItem = $(e.currentTarget);
+	let view = map.getView();
+  let coordinates = JSON.parse(currentItem.attr("data-coordinates"));
+  let selectedFeature = addresses
     .getSource()
-    .getClosestFeatureToCoordinate(
-      JSON.parse($(e.currentTarget).attr("data-coordinates"))
-	);
-	selectedFeature.setStyle(selectedIcon);
-	map
-    .getView().setCenter(
-			JSON.parse($(e.currentTarget).attr("data-coordinates")));
-	map.getView().setZoom(20);
-  // console.log(index);
-  // alert(child_index);
-  // console.log(addresses.getKeys());
-  // console.log(
-  //   addresses
-  //     .getSource()
-  //     .getFeaturesAtCoordinate(
-  //       JSON.parse($(e.currentTarget).attr("data-coordinates"))
-  //     )
-  //     .getProperties()
-  // );
-	let coordinates = JSON.parse($(e.currentTarget).attr("data-coordinates"));
-	console.log(
-    addresses
-      .getSource()
-      .getClosestFeatureToCoordinate(
-        JSON.parse($(e.currentTarget).attr("data-coordinates"))
-      )
-      .getProperties()
-  );
-  // console.log(addresses.getSource().getFeatures()[index].getRevision());
-  // console.log(features)
-  // getFeaturesAtCoordinate(coordinate);
-  let features = addresses
-    .getSource()
-    .getFeatures()
-    .map((features) => features.getProperties());
-  let selected = addresses
-    .getSource()
-    .getFeatures()
-    .map((features) => features.getProperties())
-    .filter((a) => a["_id"] == $(e.currentTarget).attr("id"));
-  // let selected = addresses
-  //   .getSource()
-  //   .getFeatures()
-  // 	.filter((feature) => feature.getProperties("_id") == $(e.currentTarget).attr("id"));
-  // console.log(features)
-  // console.log($(e.currentTarget).attr("id"));
-  // console.log(selected)
-  // const result = words.filter((word) => word.length > 6);
+    .getClosestFeatureToCoordinate(coordinates);
+  selectedFeature.setStyle(selectedIcon);
+  view.setCenter(coordinates);
+  view.setZoom(20);
+  currentItem.addClass("selected");
 });
+
+const clearResults = () => {
+  addresses.setSource(null);
+  $("#afo-results").children("ul").empty().hide();
+};

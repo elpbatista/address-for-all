@@ -1,4 +1,4 @@
-import API, { mapCenter, olKey as key, markerBlue } from "./addressforall.js";
+import API, { mapCenter, olKey as key, markerBlue, markerOrange } from "./addressforall.js";
 import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
@@ -26,6 +26,23 @@ const icon = new Style({
     anchorXUnits: "fraction",
     anchorYUnits: "pixels",
     src: markerBlue,
+  }),
+  // text: new Text({
+  //   text: getText,
+  //   font: "11px",
+  //   fill: new Fill({ color: "rgba(52, 102, 180, 1)" }),
+  //   stroke: new Stroke({ color: "rgba(46, 44, 42, 0.5)", width: .5 }),
+  //   textAlign: "center",
+  //   offsetY: -20,
+  // }),
+});
+
+const selectedIcon = new Style({
+  image: new Icon({
+    anchor: [0.5, 31],
+    anchorXUnits: "fraction",
+    anchorYUnits: "pixels",
+    src: markerOrange,
   }),
   // text: new Text({
   //   text: getText,
@@ -68,7 +85,7 @@ const map = new Map({
   view: new View({
     projection: "EPSG:4326",
     center: mapCenter,
-    zoom: 14,
+    zoom: 15,
   }),
 });
 
@@ -94,22 +111,25 @@ const searchBounded = (term, boundingBox) => {
         // clear map
         addresses.setSource(null);
         // plot search results
-        let newfeatures = new GeoJSON().readFeatures(data);
-        console.log(newfeatures);
+        // let newfeatures = new GeoJSON().readFeatures(data);
+				// // console.log(newfeatures);
+				// newfeatures = newfeatures.map((feature) => feature.setId(6287342340))
+				// console.log(newfeatures);
         addresses.setSource(
           new VectorSource({
             features: new GeoJSON().readFeatures(data),
+            // features: newfeatures,
           })
         );
         let result = data.features.map(
           (feature) =>
             '<li id="' +
             feature.properties._id +
-            '" class="feature list-group-item d-flex justify-content-between align-items-start">' +
-            '<div class="ms-2 me-auto">' +
-            '<div class="address fw-bold" data-coordinates="' +
+            '" class="feature list-group-item d-flex justify-content-between align-items-start"  data-coordinates="' +
             JSON.stringify(feature.geometry.coordinates) +
             '">' +
+            '<div class="ms-2 me-auto">' +
+            '<div class="address fw-bold">' +
             feature.properties.address +
             "</div>" +
             '<div class="display_name fw-lighter">' +
@@ -143,7 +163,12 @@ const searchBounded = (term, boundingBox) => {
         // console.log(
         //   data.features.map((feature) => feature.properties.similarity)
         // );
-      }
+			}
+			else {
+				alert(
+          `Oiga compay, cámbieme esa búsqueda que preguntando por "${term}" aquí abajito no encuentro na`
+        );
+			}
     },
   });
 };
@@ -175,6 +200,8 @@ $(document).on("click", "#clear-btn", function (e) {
   e.stopPropagation();
 	e.stopImmediatePropagation();
 	addresses.setSource(null);
+	$("#afo-results").children("ul").empty().hide();
+	$("#search").val("");
 	return false;
 });
 
@@ -182,12 +209,36 @@ $(document).on("click", ".feature", function (e) {
   // alert(JSON.stringify(addresses.features))
   e.stopPropagation();
   e.stopImmediatePropagation();
-  let index = $(e.currentTarget).index();
+	let index = $(e.currentTarget).index();
+	let selectedFeature = addresses
+    .getSource()
+    .getClosestFeatureToCoordinate(
+      JSON.parse($(e.currentTarget).attr("data-coordinates"))
+	);
+	selectedFeature.setStyle(selectedIcon);
   // console.log(index);
   // alert(child_index);
   // console.log(addresses.getKeys());
-  console.log(addresses.getSource().getFeatures()[index].getProperties());
+  // console.log(
+  //   addresses
+  //     .getSource()
+  //     .getFeaturesAtCoordinate(
+  //       JSON.parse($(e.currentTarget).attr("data-coordinates"))
+  //     )
+  //     .getProperties()
+  // );
+	let coordinates = JSON.parse($(e.currentTarget).attr("data-coordinates"));
+	console.log(
+    addresses
+      .getSource()
+      .getClosestFeatureToCoordinate(
+        JSON.parse($(e.currentTarget).attr("data-coordinates"))
+      )
+      .getProperties()
+  );
+  // console.log(addresses.getSource().getFeatures()[index].getRevision());
   // console.log(features)
+  // getFeaturesAtCoordinate(coordinate);
   let features = addresses
     .getSource()
     .getFeatures()

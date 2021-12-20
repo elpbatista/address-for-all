@@ -216,6 +216,10 @@ $(document).on("click", ".feature", function (e) {
       JSON.parse($(e.currentTarget).attr("data-coordinates"))
 	);
 	selectedFeature.setStyle(selectedIcon);
+	map
+    .getView().setCenter(
+			JSON.parse($(e.currentTarget).attr("data-coordinates")));
+	map.getView().setZoom(20);
   // console.log(index);
   // alert(child_index);
   // console.log(addresses.getKeys());

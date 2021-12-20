@@ -21,6 +21,20 @@ GRANT EXECUTE ON FUNCTION api.viewbox_to_polygon(numeric, numeric, numeric, nume
 GRANT EXECUTE ON FUNCTION api.viewbox_to_polygon(numeric, numeric, numeric, numeric) TO batista;
 GRANT EXECUTE ON FUNCTION api.viewbox_to_polygon(numeric, numeric, numeric, numeric) TO postgres;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Get Center Point
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- FUNCTION: api.get_centroid()
+-- DROP FUNCTION IF EXISTS api.get_centroid();
+CREATE OR REPLACE FUNCTION api.get_centroid() RETURNS jsonb LANGUAGE 'sql' COST 100 IMMUTABLE PARALLEL UNSAFE AS $BODY$
+SELECT to_jsonb(ST_centroid(ST_AsText(ST_Extent(geom)))) AS centroid
+FROM api.search;
+$BODY$;
+ALTER FUNCTION api.get_centroid() OWNER TO postgres;
+GRANT EXECUTE ON FUNCTION api.get_centroid() TO PUBLIC;
+GRANT EXECUTE ON FUNCTION api.get_centroid() TO batista;
+GRANT EXECUTE ON FUNCTION api.get_centroid() TO postgres;
+COMMENT ON FUNCTION api.get_centroid() IS 'Returns the center point of the polygon that contains all addresses in api.search';
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- Full Text Generic Search
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- FUNCTION: api.search(text, integer)

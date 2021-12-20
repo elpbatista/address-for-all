@@ -429,12 +429,11 @@ WITH q AS (
   LIMIT 10
 )
 SELECT json_build_object(
-      'type',
-      'FeatureCollection',
-      'features',
-      j.features
-    )
- AS response
+    'type',
+    'FeatureCollection',
+    'features',
+    j.features
+  ) AS response
 FROM (
     SELECT count(r) AS features_count,
       json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
@@ -452,7 +451,10 @@ FROM (
         FROM (
             SELECT *
             FROM q
-            WHERE q.diff < (SELECT MIN(diff) + MIN(diff)/10 FROM q)
+            WHERE q.diff < (
+                SELECT MIN(diff) + MIN(diff) / 10
+                FROM q
+              )
           ) s
       ) r
   ) j;
@@ -461,9 +463,13 @@ FROM (
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WITH q AS (
   SELECT *,
-    ((lower('Calle 107C #42B Popular') <->spq) +
-	(lower('Calle 107C #42B Popular') <->(properties->>'address')::text) +
-	(lower('Calle 107C #42B Popular') <->(properties->>'display_name')::text))/3 AS diff
+    (
+      (lower('Calle 107C #42B Popular') <->spq) + (
+        lower('Calle 107C #42B Popular') <->(properties->>'address')::text
+      ) + (
+        lower('Calle 107C #42B Popular') <->(properties->>'display_name')::text
+      )
+    ) / 3 AS diff
   FROM (
       SELECT *
       FROM api.search
@@ -479,12 +485,11 @@ WITH q AS (
   LIMIT 10
 )
 SELECT json_build_object(
-      'type',
-      'FeatureCollection',
-      'features',
-      j.features
-    )
- AS response
+    'type',
+    'FeatureCollection',
+    'features',
+    j.features
+  ) AS response
 FROM (
     SELECT json_agg(ST_AsGeoJSON(r, 'geom', 6)::json) AS features
     FROM (
@@ -501,7 +506,10 @@ FROM (
         FROM (
             SELECT *
             FROM q
-            WHERE q.diff < (SELECT MIN(diff) + MIN(diff)/5 FROM q)
+            WHERE q.diff < (
+                SELECT MIN(diff) + MIN(diff) / 5
+                FROM q
+              )
           ) s
       ) r
   ) j;
@@ -705,7 +713,12 @@ FROM (
   ) j;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --  Testing pb's Functions
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT to_jsonb(ST_centroid(ST_AsText(ST_Extent(geom)))) AS centroid
+FROM api.search;
+-- 
+SELECT api.get_centroid();
+-- 
 SELECT api.get_addresses_in_bbox(-75.552, 6.291, -75.543, 6.297);
 SELECT api.viewbox_to_polygon(-75.552, 6.291, -75.543, 6.297);
 -- 
@@ -728,4 +741,9 @@ SELECT api.reverse(-75.486799, 6.194510, 200, 10);
 -- 
 EXPLAIN ANALYZE
 SELECT api.search('Calle 95 #69-61', 1);
-SELECT api.test_2(r) FROM (SELECT * FROM api.search LIMIT 3)r;
+SELECT api.test_2(r)
+FROM (
+    SELECT *
+    FROM api.search
+    LIMIT 3
+  ) r;

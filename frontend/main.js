@@ -1,3 +1,4 @@
+import API from "./addressforall.js";
 import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
@@ -11,8 +12,11 @@ import GeoJSON from "ol/format/GeoJSON";
 // import { useGeographic } from "ol/proj";
 // useGeographic();
 
-// import $ from "jquery";
-// window.jQuery = window.$ = $;
+import $ from "jquery";
+import mark from "mark.js/dist/jquery.mark.js";
+import "bootstrap";
+window.jQuery = window.$ = $;
+
 
 const centerMap = [-75.573553, 6.2443382];
 const key =
@@ -77,7 +81,7 @@ const map = new Map({
 
 const searchBounded = (term, boundingBox) => {
   $.ajax({
-    url: "http://api.addressforall.org/test/_sql/rpc/search_bounded",
+    url: API.search_bounded,
     type: "POST",
     processData: false,
     contentType: "application/json",
@@ -90,11 +94,13 @@ const searchBounded = (term, boundingBox) => {
     }),
     dataType: "json",
     crossDomain: true,
-    success: function (data) {
+		success: function (data) {
       if (data.features) {
         // clear map
         addresses.setSource(null);
         // plot search results
+				let newfeatures = new GeoJSON().readFeatures(data);
+				console.log(newfeatures)
         addresses.setSource(
           new VectorSource({
             features: new GeoJSON().readFeatures(data),
@@ -102,7 +108,7 @@ const searchBounded = (term, boundingBox) => {
 				);
         let result = data.features.map(
           (feature) =>
-            '<li id="'+ feature.properties._id+'" class="list-group-item d-flex justify-content-between align-items-start">' +
+            '<li id="'+ feature.properties._id+'" class="feature list-group-item d-flex justify-content-between align-items-start">' +
             '<div class="ms-2 me-auto">' +
             '<div class="address fw-bold" data-coordinates="'+ JSON.stringify(feature.geometry.coordinates) +'">' +
             feature.properties.address +
@@ -158,4 +164,30 @@ const search = (e) => {
 
 $("#search").on("keyup", function (e) {
   search(e);
+});
+
+$(document).on("click", ".feature", function (e) {
+  // alert(JSON.stringify(addresses.features))
+	e.stopPropagation();
+	e.stopImmediatePropagation();
+	let index = $(e.currentTarget).index();
+	// console.log(index);
+  // alert(child_index);
+	// console.log(addresses.getKeys());
+  console.log(addresses.getSource().getFeatures()[index].getProperties());
+	// console.log(features)
+	let features = addresses.getSource().getFeatures().map((features) => features.getProperties())
+	let selected = addresses
+    .getSource()
+    .getFeatures()
+    .map((features) => features.getProperties())
+    .filter((a) => a["_id"] == $(e.currentTarget).attr("id"));
+	// let selected = addresses
+  //   .getSource()
+  //   .getFeatures()
+	// 	.filter((feature) => feature.getProperties("_id") == $(e.currentTarget).attr("id"));
+	// console.log(features)
+	// console.log($(e.currentTarget).attr("id"));
+	// console.log(selected)
+	// const result = words.filter((word) => word.length > 6);
 });

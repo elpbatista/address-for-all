@@ -20,19 +20,28 @@ body {
 #afo-search {
   background-color: rgba(255, 255, 255, .80);
   position: absolute;
-  z-index: 5000;
+  z-index: 1000;
   top: 0;
   left: 0;
+	min-height: 3.5rem;
 	max-height: 100%;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #afo-results {
 	display: none;
+	z-index: 1010;
+	padding: 4rem .5rem .5rem .5rem;
 }
 
-.list-group-item {
+#afo-results .list-group-item {
 	font-size: .8rem;
 	background-color: transparent;
-	padding: .5rem 0;
+	padding: .4rem 0rem;
+}
+
+#afo-search form {
+	z-index: 1500;
+	background-color: rgba(255, 255, 255, .80);
+	padding: .8rem 1rem;
 }

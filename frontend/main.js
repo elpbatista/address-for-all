@@ -68,7 +68,7 @@ const map = new Map({
   view: new View({
     projection: "EPSG:4326",
     center: mapCenter,
-    zoom: 15,
+    zoom: 14,
   }),
 });
 
@@ -85,7 +85,7 @@ const searchBounded = (term, boundingBox) => {
     data: JSON.stringify({
       _q: term,
       viewbox: boundingBox,
-      // lim: 1000,
+      lim: 1000,
     }),
     dataType: "json",
     crossDomain: true,

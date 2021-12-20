@@ -15,8 +15,15 @@
 
 	<div id="afo-search" class="col-2 ol-2">
 		<form class="position-fixed clearfix col-2 ol-2">
-			<input type="text" id="search" class="form-control" />
+			<!-- <input type="text" id="search" class="form-control" /> -->
+			<div class="input-group">
+				<div class="input-group-text" id="btnA4O"><img id="afo_logo" src="img/addressforall_logo_bck_trasp_32.png"
+						alt="Address for All"></div>
+				<input id="search" type="text" class="form-control">
+			</div>
+			<button id="clear-btn" class="rounded-circle">x</button>
 		</form>
+
 		<div id="afo-results" class="">
 			<ul id="results" class="list-group list-group-flush list-group-numbered"></ul>
 		</div>

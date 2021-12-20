@@ -17,6 +17,11 @@ body {
   display: none;
 }
 
+#btnA4O img {
+	height: 1.9rem;
+	padding: .2rem;
+}
+
 #afo-search {
   background-color: rgba(255, 255, 255, .80);
   position: absolute;
@@ -34,7 +39,7 @@ body {
 	padding: 4rem .5rem .5rem .5rem;
 }
 
-#afo-results .list-group-item {
+.list-group-item {
 	font-size: .8rem;
 	background-color: transparent;
 	padding: .4rem 0rem;
@@ -44,4 +49,23 @@ body {
 	z-index: 1500;
 	background-color: rgba(255, 255, 255, .80);
 	padding: .8rem 1rem;
+}
+
+.input-group-text {
+	padding: 0 0 !important;
+	background-color: transparent !important;
+}
+
+#clear-btn {
+	position: absolute;
+	top: 1.3rem;
+	right: 1.5rem;
+	border: none !important;
+	font-size: .75rem;
+	line-height: 1.25;
+	background-color: whitesmoke;
+	box-shadow: 2px 3px 3px 0px rgba(0, 0, 0, 0.25);
+	-webkit-box-shadow: 2px 3px 3px 0px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 2px 3px 3px 0px rgba(0, 0, 0, 0.25);
+	display: none;
 }

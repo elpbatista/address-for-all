@@ -127,7 +127,9 @@ const searchBounded = (term, boundingBox) => {
             "</li>"
         );
         // show results
-        $("#afo-results").show();
+				$("#afo-results").show();
+				$("#clear-btn").show();
+				// $("#search").delay(600).trigger("blur"); 
         // clear the list
         $("#afo-results").children("ul").empty();
         // populate the list
@@ -167,6 +169,13 @@ $("#search").on("keyup", function (e) {
 
 $(document).on("keydown", "form", function (event) {
   return event.key != "Enter";
+});
+
+$(document).on("click", "#clear-btn", function (e) {
+  e.stopPropagation();
+	e.stopImmediatePropagation();
+	addresses.setSource(null);
+	return false;
 });
 
 $(document).on("click", ".feature", function (e) {

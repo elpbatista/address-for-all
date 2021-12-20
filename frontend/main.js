@@ -1,4 +1,4 @@
-import API from "./addressforall.js";
+import API, { mapCenter, olKey as key, markerBlue } from "./addressforall.js";
 import "./style.css";
 import "ol/ol.css";
 import Map from "ol/Map";
@@ -14,13 +14,8 @@ import GeoJSON from "ol/format/GeoJSON";
 
 import $ from "jquery";
 import mark from "mark.js/dist/jquery.mark.js";
-import "bootstrap";
 window.jQuery = window.$ = $;
 
-
-const centerMap = [-75.573553, 6.2443382];
-const key =
-  "pk.eyJ1IjoiZWxwYmF0aXN0YSIsImEiOiJja3gyZHl5OXYxbm5yMnFxOTFtZWhqbWlhIn0.bbHJjnHrt_d9iqu4hBZgyw";
 const attribution = new Attribution({
   collapsible: false,
 });
@@ -30,7 +25,7 @@ const icon = new Style({
     anchor: [0.5, 31],
     anchorXUnits: "fraction",
     anchorYUnits: "pixels",
-    src: "../img/map-marker-2-32.png",
+    src: markerBlue,
   }),
   // text: new Text({
   //   text: getText,
@@ -72,8 +67,8 @@ const map = new Map({
   layers: [baseMap, addresses],
   view: new View({
     projection: "EPSG:4326",
-    center: centerMap,
-    zoom: 17,
+    center: mapCenter,
+    zoom: 15,
   }),
 });
 
@@ -94,23 +89,27 @@ const searchBounded = (term, boundingBox) => {
     }),
     dataType: "json",
     crossDomain: true,
-		success: function (data) {
+    success: function (data) {
       if (data.features) {
         // clear map
         addresses.setSource(null);
         // plot search results
-				let newfeatures = new GeoJSON().readFeatures(data);
-				console.log(newfeatures)
+        let newfeatures = new GeoJSON().readFeatures(data);
+        console.log(newfeatures);
         addresses.setSource(
           new VectorSource({
             features: new GeoJSON().readFeatures(data),
           })
-				);
+        );
         let result = data.features.map(
           (feature) =>
-            '<li id="'+ feature.properties._id+'" class="feature list-group-item d-flex justify-content-between align-items-start">' +
+            '<li id="' +
+            feature.properties._id +
+            '" class="feature list-group-item d-flex justify-content-between align-items-start">' +
             '<div class="ms-2 me-auto">' +
-            '<div class="address fw-bold" data-coordinates="'+ JSON.stringify(feature.geometry.coordinates) +'">' +
+            '<div class="address fw-bold" data-coordinates="' +
+            JSON.stringify(feature.geometry.coordinates) +
+            '">' +
             feature.properties.address +
             "</div>" +
             '<div class="display_name fw-lighter">' +
@@ -166,28 +165,35 @@ $("#search").on("keyup", function (e) {
   search(e);
 });
 
+$(document).on("keydown", "form", function (event) {
+  return event.key != "Enter";
+});
+
 $(document).on("click", ".feature", function (e) {
   // alert(JSON.stringify(addresses.features))
-	e.stopPropagation();
-	e.stopImmediatePropagation();
-	let index = $(e.currentTarget).index();
-	// console.log(index);
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  let index = $(e.currentTarget).index();
+  // console.log(index);
   // alert(child_index);
-	// console.log(addresses.getKeys());
+  // console.log(addresses.getKeys());
   console.log(addresses.getSource().getFeatures()[index].getProperties());
-	// console.log(features)
-	let features = addresses.getSource().getFeatures().map((features) => features.getProperties())
-	let selected = addresses
+  // console.log(features)
+  let features = addresses
+    .getSource()
+    .getFeatures()
+    .map((features) => features.getProperties());
+  let selected = addresses
     .getSource()
     .getFeatures()
     .map((features) => features.getProperties())
     .filter((a) => a["_id"] == $(e.currentTarget).attr("id"));
-	// let selected = addresses
+  // let selected = addresses
   //   .getSource()
   //   .getFeatures()
-	// 	.filter((feature) => feature.getProperties("_id") == $(e.currentTarget).attr("id"));
-	// console.log(features)
-	// console.log($(e.currentTarget).attr("id"));
-	// console.log(selected)
-	// const result = words.filter((word) => word.length > 6);
+  // 	.filter((feature) => feature.getProperties("_id") == $(e.currentTarget).attr("id"));
+  // console.log(features)
+  // console.log($(e.currentTarget).attr("id"));
+  // console.log(selected)
+  // const result = words.filter((word) => word.length > 6);
 });

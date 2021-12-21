@@ -10,6 +10,8 @@ const Medellin = {
   CP: Data + "Medellin/geojson/codigo postal.geojson",
   PI: Data + "Medellin/geojson/puntos_de_interes_o_nombre_del_predio.geojson",
   LP: Data + "Medellin/geojson/lote_del_predio",
+  Source: "Alcaldía de Medellín OpenData",
+  Vias: "20211220_vias_medellin.json",
 };
 const Bogota = "";
 const Colombia = "";
@@ -48,4 +50,5 @@ module.exports = {
   TipoDeVia: TiposDeVia,
   yyyymmdd: yyyymmdd,
   Output: Output,
+  ViasMedellin: Output+Medellin.Vias
 };

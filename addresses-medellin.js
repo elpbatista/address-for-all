@@ -1,8 +1,7 @@
 const fs = require("fs");
-const { Medellin } = require("./init-data.js");
 const _d = require("./init-data.js");
 
-const nd = JSON.parse(fs.readFileSync(_d.Medellin.ND));
+const nd = JSON.parse(fs.readFileSync(_d.NDPostalcode));
 const viasMedellin = JSON.parse(fs.readFileSync(_d.ViasMedellin));
 // console.log(nd)
 
@@ -26,6 +25,7 @@ for (var i = 0; i < 10; i++) {
     // --------------------------------
     via_name: viasMedellin[properties.VIA] || null,
     address: properties.VIA + " #" + properties.PLACA,
+    postalcode: properties.CODIGO_POS,
     // --------------------------------
     tipo_cruce: properties.TIPO_CRUCE,
     codigo_man: properties.CODIGO_MAN,

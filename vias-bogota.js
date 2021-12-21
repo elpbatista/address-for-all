@@ -21,6 +21,9 @@ let viaNames = nv.features
 
 // console.table(viaNames);
 
+// console.log(new Set(viaNames.map((a) => a[0])));
+// Set(6) { 'KR', 'CL', 'TV', 'AK', 'AC', 'DG' }
+
 let uniqueNames = [
   ...new Set(
     viaNames.map(

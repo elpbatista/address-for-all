@@ -19,7 +19,7 @@ turf.featureEach(nd, function (currentPoint) {
 });
 
 fs.writeFileSync(
-  _d.Output + _d.yyyymmdd + "_nd_postalcode_Bogota.geojson",
+  _d.Output + _d.yyyymmdd + "_nd_postalcode_bogota.geojson",
   JSON.stringify(nd),
   (err) => {
     if (err) {

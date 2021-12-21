@@ -16,7 +16,8 @@ let viaNames = nv.features
   .filter((a) => a[2] !== null && a[1] !== a[2]);
 
 // console.log(new Set(viaNames.map((a) => a[0])));
-  
+// Set(7) { 'CR', 'CL', 'TV', 'DG', 'CQ', 'SR', 'VR' } 
+ 
 let uniqueNames = [
   ...new Set(
     viaNames.map(

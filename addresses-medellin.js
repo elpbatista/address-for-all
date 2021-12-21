@@ -2,8 +2,8 @@ const fs = require("fs");
 const _d = require("./init-data.js");
 const converter = require("json-2-csv");
 
-const nd = JSON.parse(fs.readFileSync(_d.NDPostalcode));
-const viasMedellin = JSON.parse(fs.readFileSync(_d.ViasMedellin));
+const nd = JSON.parse(fs.readFileSync(_d.Medellin.NDCP));
+const viasMedellin = JSON.parse(fs.readFileSync(_d.Medellin.Vias));
 // console.log(nd)
 
 // const ptsWithOutVIA = nd.features.filter((a) => a.properties.VIA === null);
@@ -13,11 +13,15 @@ const viasMedellin = JSON.parse(fs.readFileSync(_d.ViasMedellin));
 //   (a) => a.properties.CODIGO_POS === null
 // );
 // console.table(ptsWithOutPostcode);
+const displayNAme = (via, placa, barrio) => {
+  let chunks = via.split(" ");
+  return _d.TipoDeVia[chunks[0]] + " " + chunks[1] + " " + placa + " " + barrio;
+};
 
 const ndTable = [];
 console.log(nd.features.length);
 for (var i = 0; i < nd.features.length; i++) {
-// for (var i = 0; i < 1000; i++) {
+// for (var i = 0; i < 10; i++) {
   let feature = nd.features[i];
   let properties = feature.properties;
   ndTable.push({
@@ -43,12 +47,12 @@ for (var i = 0; i < nd.features.length; i++) {
     // --------------------------------
     via_name: viasMedellin[properties.VIA] || null,
     address: properties.VIA + " #" + properties.PLACA,
-    display_name: '',
+    display_name: displayNAme(properties.VIA, properties.PLACA, properties.NOMBRE_BAR),
     // housename: '',
     // divipola: '',
   });
 }
-// console.table(ndTable);
+// console.log(ndTable);
 converter.json2csv(JSON.parse(JSON.stringify(ndTable)), function (err, csv) {
   fs.writeFileSync(_d.Output + _d.yyyymmdd + "_Medellin.csv", csv);
 });

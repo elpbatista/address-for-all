@@ -11,21 +11,25 @@ const Medellin = {
   PI: Data + "Medellin/geojson/puntos_de_interes_o_nombre_del_predio.geojson",
   LP: Data + "Medellin/geojson/lote_del_predio",
   Source: "Alcaldía de Medellín OpenData",
-  Vias: "20211220_vias_medellin.json",
-  NDCP: "20211221_nd_postalcode_medellin.geojson",
+  Vias: Output + "20211220_vias_medellin.json",
+  NDCP: Output + "20211221_nd_postalcode_medellin.geojson",
 };
 const Bogota = {
   ND: Data + "Bogota/geojson/placa_domiciliaria.geojson",
   NV: Data + "Bogota/geojson/malla_vial_integral.geojson",
   CP: Data + "Bogota/geojson/codigo_postal.geojson",
   SCAT: Data + "Bogota/geojson/scat.geojson",
+  NDCP: Output + "20211221_nd_postalcode_bogota.geojson",
+  NDSCAT: Output + "20211221_nd_sector_catastral_bogota.geojson",
+  Vias: Output + "20211221_vias_bogota.json",
+  SCAN: Output + "20211221_scanombres_bogota.geojson",
 };
 const Colombia = "";
 
 const TiposDeVia = {
   AC: "Avenida Calle",
   AK: "Avenida Carrera",
-  CR: "",
+  CR: "Carrera",
   CV: "Circunvalar",
   CL: "Calle",
   CC: "Cuentas Corridas",
@@ -55,7 +59,5 @@ module.exports = {
   Colombia: Colombia,
   TipoDeVia: TiposDeVia,
   yyyymmdd: yyyymmdd,
-  Output: Output,
-  ViasMedellin: Output+Medellin.Vias,
-  NDPostalcode: Output+Medellin.NDCP
+  Output: Output
 };

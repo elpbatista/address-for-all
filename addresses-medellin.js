@@ -6,8 +6,13 @@ const nd = JSON.parse(fs.readFileSync(_d.NDPostalcode));
 const viasMedellin = JSON.parse(fs.readFileSync(_d.ViasMedellin));
 // console.log(nd)
 
-// const ptsWitOuthVIA = nd.features.filter((a) => a.properties.VIA === null);
-// console.table(ptsWitOuthVIA);
+// const ptsWithOutVIA = nd.features.filter((a) => a.properties.VIA === null);
+// console.table(ptsWithOutVIA);
+
+// const ptsWithOutPostcode = nd.features.filter(
+//   (a) => a.properties.CODIGO_POS === null
+// );
+// console.table(ptsWithOutPostcode);
 
 const ndTable = [];
 console.log(nd.features.length);

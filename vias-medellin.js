@@ -18,8 +18,13 @@ let viaNames = nv.features
 // console.log(new Set(viaNames.map((a) => a[0])));
   
 let uniqueNames = [
-  ...new Set(viaNames.map((a) => a[0] + "|" + a[1] + "|" + a[2])),
-].map((a)=>a.split("|"));
+  ...new Set(
+    viaNames.map(
+      (a) =>
+        a.join('|')
+    )
+  ),
+].map((a) => a.split('|'));
 // console.log(uniqueNames);
 
 const buildObject = (arr) => {

@@ -14,7 +14,12 @@ const Medellin = {
   Vias: "20211220_vias_medellin.json",
   NDCP: "20211221_nd_postalcode.geojson",
 };
-const Bogota = "";
+const Bogota = {
+  ND: Data + "Bogota/geojson/placa_domiciliaria.geojson",
+  NV: Data + "Bogota/geojson/malla_vial_integral.geojson",
+  CP: Data + "Bogota/geojson/codigo_postal.geojson",
+  SCAT: Data + "Bogota/geojson/scat.geojson",
+};
 const Colombia = "";
 
 const TiposDeVia = {

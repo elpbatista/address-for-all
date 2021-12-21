@@ -12,7 +12,7 @@ const Medellin = {
   LP: Data + "Medellin/geojson/lote_del_predio",
   Source: "Alcaldía de Medellín OpenData",
   Vias: "20211220_vias_medellin.json",
-  NDCP: "20211221_nd_postalcode.geojson",
+  NDCP: "20211221_nd_postalcode_medellin.geojson",
 };
 const Bogota = {
   ND: Data + "Bogota/geojson/placa_domiciliaria.geojson",

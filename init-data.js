@@ -40,7 +40,7 @@ const TiposDeVia = {
   TC: "Troncal",
   DG: "Diagonal",
   CQ: "Circular",
-  SR: "",
+  SR: "Servidumbre-Peatonal",
   VR: "Vereda",
   AU: "Autopista",
   AV: "Avenida",

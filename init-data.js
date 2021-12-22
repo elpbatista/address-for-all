@@ -41,7 +41,7 @@ const TiposDeVia = {
   DG: "Diagonal",
   CQ: "Circular",
   SR: "",
-  VR: "",
+  VR: "Vereda",
   AU: "Autopista",
   AV: "Avenida",
   BV: "Bulevar",

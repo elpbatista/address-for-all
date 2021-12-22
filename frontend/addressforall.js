@@ -4,7 +4,7 @@ const markerBlue = "../img/map-marker-blue-32.png";
 const markerOrange = "../img/map-marker-orange-32.png";
 const mapCenter = [-74.863987, 5.179751];
 
-const APIURL = "http://api.addressforall.org/test/_sql/rpc/";
+const APIURL = "https://api.addressforall.org/test/_sql/rpc/";
 const API = {
   search: APIURL + "search",
   search_bounded: APIURL + "search_bounded",

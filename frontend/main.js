@@ -31,8 +31,10 @@ window.jQuery = window.$ = $;
   //   queries[i[0].toString()] = i[1].toString();
   // });
   
-let pathname = document.location.pathname.replace('/', '');
+let pathname = document.location.search.replace('?', '');
 let centerMap = (pathname)?switchCity[pathname]:mapCenter;
+
+console.log(document.location);
 
 const attribution = new Attribution({
   collapsible: false,

@@ -18,23 +18,12 @@ import GeoJSON from "ol/format/GeoJSON";
 // import { useGeographic } from "ol/proj";
 // useGeographic();
 
-
-
 import $ from "jquery";
-// import mark from "mark.js/dist/jquery.mark.js";
-// import { clearAllProjections } from "ol/proj";
+import mark from "mark.js/dist/jquery.mark.js";
 window.jQuery = window.$ = $;
-
-  // let queries = {};
-  // $.each(document.location.search.substr(1).split("&"), function (c, q) {
-  //   let i = q.split("=");
-  //   queries[i[0].toString()] = i[1].toString();
-  // });
   
 let pathname = document.location.search.replace('?', '');
 let centerMap = (pathname)?switchCity[pathname]:mapCenter;
-
-console.log(document.location);
 
 const attribution = new Attribution({
   collapsible: false,
@@ -138,9 +127,7 @@ const searchBounded = (term, boundingBox) => {
         );
         let result = data.features.map(
           (feature) =>
-            '<li id="' +
-            feature.properties._id +
-            '" class="feature list-group-item d-flex justify-content-between align-items-start"  data-coordinates="' +
+            '<li class="feature list-group-item d-flex justify-content-between align-items-start"  data-coordinates="' +
             JSON.stringify(feature.geometry.coordinates) +
             '">' +
             '<div class="ms-2 me-auto">' +
@@ -149,10 +136,6 @@ const searchBounded = (term, boundingBox) => {
             "</div>" +
             '<div class="display_name fw-lighter">' +
             feature.properties.display_name +
-            " " +
-            feature.properties.barrio +
-            // " " +
-            // feature.properties.comuna +
             "</div>" +
             "</div>" +
             '<span class="badge bg-info bg-opacity-85 rounded-pill">' +

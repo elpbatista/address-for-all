@@ -3,6 +3,7 @@ import API, {
   olKey as key,
   markerBlue,
   markerOrange,
+  switchCity
 } from "./addressforall.js";
 import "./style.css";
 import "ol/ol.css";
@@ -17,10 +18,21 @@ import GeoJSON from "ol/format/GeoJSON";
 // import { useGeographic } from "ol/proj";
 // useGeographic();
 
+
+
 import $ from "jquery";
-import mark from "mark.js/dist/jquery.mark.js";
-import { clearAllProjections } from "ol/proj";
+// import mark from "mark.js/dist/jquery.mark.js";
+// import { clearAllProjections } from "ol/proj";
 window.jQuery = window.$ = $;
+
+  // let queries = {};
+  // $.each(document.location.search.substr(1).split("&"), function (c, q) {
+  //   let i = q.split("=");
+  //   queries[i[0].toString()] = i[1].toString();
+  // });
+  
+let pathname = document.location.pathname.replace('/', '');
+let centerMap = (pathname)?switchCity[pathname]:mapCenter;
 
 const attribution = new Attribution({
   collapsible: false,
@@ -90,7 +102,7 @@ const map = new Map({
   layers: [baseMap, addresses],
   view: new View({
     projection: "EPSG:4326",
-    center: mapCenter,
+    center: centerMap,
     zoom: 15,
   }),
 });

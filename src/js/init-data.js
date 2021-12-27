@@ -10,7 +10,6 @@ const Medellin = {
   CP: Data + "Medellin/geojson/codigo_postal.geojson",
   PI: Data + "Medellin/geojson/puntos_de_interes_o_nombre_del_predio.geojson",
   LP: Data + "Medellin/geojson/lote_del_predio.geojson",
-  Source: "Alcaldía de Medellín OpenData",
   Vias: Output + "20211220_vias_medellin.json",
   NDCP: Output + "20211221_nd_postalcode_medellin.geojson",
 };

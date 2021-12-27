@@ -2,14 +2,14 @@ const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in millisecond
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const yyyymmdd = localISOTime.replace(/-/g, "").split("T")[0];
 
-const Data = "../Data/Updated/";
-const Output = "../Data/Output/";
+const Data = "../../../Data/Updated/";
+const Output = "../../../Data/Output/";
 const Medellin = {
   ND: Data + "Medellin/geojson/nomenclatura_domiciliaria.geojson",
   NV: Data + "Medellin/geojson/nomenclatura_vial.geojson",
   CP: Data + "Medellin/geojson/codigo_postal.geojson",
   PI: Data + "Medellin/geojson/puntos_de_interes_o_nombre_del_predio.geojson",
-  LP: Data + "Medellin/geojson/lote_del_predio",
+  LP: Data + "Medellin/geojson/lote_del_predio.geojson",
   Source: "Alcaldía de Medellín OpenData",
   Vias: Output + "20211220_vias_medellin.json",
   NDCP: Output + "20211221_nd_postalcode_medellin.geojson",

@@ -3,14 +3,16 @@
 - [1. Medellín](#1-medellín)
   - [1.1. Datos Utilizados](#11-datos-utilizados)
   - [1.2. Procesamiento](#12-procesamiento)
+    - [1.2.1. Vías](#121-vías)
 - [2. Bogotá](#2-bogotá)
   - [2.1. Datos Utilizados](#21-datos-utilizados)
   - [2.2. Procesamiento](#22-procesamiento)
+    - [2.2.1. Vías](#221-vías)
 - [3. Colombia Restante](#3-colombia-restante)
 - [4. Anexos y Anotaciones](#4-anexos-y-anotaciones)
   - [4.1. Datos procesados](#41-datos-procesados)
   - [4.2. Abreviaturas](#42-abreviaturas)
-  - [Formato de importación](#formato-de-importación)
+  - [4.3. Formato de importación](#43-formato-de-importación)
 - [5. Referencias](#5-referencias)
 
 ## 1. Medellín
@@ -31,6 +33,16 @@
 
 478,098 direcciones potenciales
 
+#### 1.2.1. Vías
+
+[vias-medellin.js](../src/js/vias-medellin.js)
+
+1052 vías con nombre en: `NV.NOMBRE_COM`
+
+```JavaScript
+TiposDeVia = { 'CR', 'CL', 'TV', 'DG', 'CQ', 'SR', 'VR' } 
+```
+
 ## 2. Bogotá
 
 ### 2.1. Datos Utilizados
@@ -47,6 +59,16 @@
 ### 2.2. Procesamiento
 
 1,794,693 direcciones potenciales
+
+#### 2.2.1. Vías
+
+[vias-bogota.js](../src/js/vias-bogota.js)
+
+95,711 vías con nombre en almenos una de: `NV.NAME`, `NV.MVINOMBRE`, `NV.MVINALTERN`, `NV.MVINANTIGU`
+
+```javascript
+TiposDeVia = { 'KR', 'CL', 'TV', 'AK', 'AC', 'DG' } 
+```
 
 ## 3. Colombia Restante
 
@@ -108,7 +130,7 @@ TiposDeVia = {
 };
 ```
 
-### Formato de importación
+### 4.3. Formato de importación
 
 ```text
 lon,lat,number,street,city,district,region,postcode,id,hash
@@ -126,7 +148,6 @@ lon,lat,number,street,city,district,region,postcode,id,hash
 | `postcode`     | `NDCP.CODIGO_POS`                              | `NDCP.CODIGO_POS + "-" + NDCP.SECUENCIA`       |          |
 | `id`           | `ND.OBJECTID`                                  | `ND.PDOCODIGO`                                 |          |
 | `hash`         | `null`                                         | `null`                                         |          |
-|                |                                                |                                                |          |
 | `cbml`         | `ND.CBML`                                      |                                                |          |
 | `tipo_via`     | `ND.TIPO_VIA`                                  | `street.split(" ")[0]`                         |          |
 | `tipo_cruce`   | `ND.TIPO_CRUCE`                                |                                                |          |
@@ -135,7 +156,6 @@ lon,lat,number,street,city,district,region,postcode,id,hash
 | `nombre_bar`   | `ND.NOMBRE_BAR`                                | `SCAN[lonlat]`                                 |          |
 | `codigo_com`   | `ND.CODIGO_COM`                                |                                                |          |
 | `nombre_com`   | `ND.NOMBRE_COM`                                |                                                |          |
-|                |                                                |                                                |          |
 | `via_name`     | `Vias[street]`                                 | `Vias[street]`                                 |          |
 | `address`      | `street #number`                               | `street #number`                               |          |
 | `display_name` | `TipoDeVia[tipo_via] street number nombre_bar` | `TipoDeVia[tipo_via] street number nombre_bar` |          |

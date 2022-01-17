@@ -33,6 +33,7 @@ let uniqueNames = [
   ),
 ].map((a) => a.split('|'));
 // console.log(uniqueNames);
+console.log(uniqueNames.length);
 
 const buildObject = (arr) => {
   const obj = {};
